@@ -57,7 +57,7 @@ export default () => {
     // Render from CDN.
     const clientVersion = process.env.CLIENT_VERSION;
     if (clientVersion) {
-      const cdnPath = config('CDN_PATH') || 'https://cdn.rawgit.com/GreanTech/auth0-criipto-verify-extension/dc26b19c/dist/';
+      const cdnPath = config('CDN_PATH') || 'https://cdn.rawgit.com/GreanTech/auth0-criipto-verify-extension/dc26b19c/dist';
       return res.send(ejs.render(template, {
         config: settings,
         assets: {

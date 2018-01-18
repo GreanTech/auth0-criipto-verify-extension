@@ -10,6 +10,7 @@ logger.info('Running production configuration...');
 
 const config = require('./config.base.js');
 config.profile = false;
+config.devtool = 'source-map';
 
 // Build output, which includes the hash.
 config.output.hash = true;
