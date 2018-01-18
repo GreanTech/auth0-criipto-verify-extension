@@ -61,6 +61,10 @@
       "winston@1.0.0"
     ],
     "settings": {
+      "EXTENSION_CLIENT_ID": "aMnRpmOmyfTFzTuN1iWUmAIFgE0r16Hd",
+      "AUTH0_DOMAIN": "grean.auth0.com",
+      "AUTH0_RTA": "auth0.auth0.com",
+      "CRIIPTO_VERIFY_DOMAIN": "api.grean.id",
       "WARN_DB_SIZE": 409600,
       "MAX_MULTISELECT_USERS": 5,
       "MULTISELECT_DEBOUNCE_MS": 250,
