@@ -66,24 +66,6 @@ export default (storage) => {
     return global.daeUser[user.sub];
   };
 
-  // Allow end users to authenticate.
-  api.use(middlewares.authenticateUsers.optional({
-    domain: config('AUTH0_ISSUER_DOMAIN'),
-    audience: config('EXTENSION_CLIENT_ID'),
-    credentialsRequired: false,
-    onLoginSuccess: (req, res, next) => {
-      const currentRequest = req;
-      return addExtraUserInfo(getToken(req), req.user)
-        .then((user) => {
-          currentRequest.user = user;
-          currentRequest.user.scope = getScopes(req.user);
-          return next();
-        })
-        .catch(next);
-
-    }
-  }));
-
   // Allow dashboard admins to authenticate.
   api.use(middlewares.authenticateAdmins.optional({
     credentialsRequired: false,
