@@ -57,7 +57,7 @@ export default () => {
     // Render from CDN.
     const clientVersion = process.env.CLIENT_VERSION;
     if (clientVersion) {
-      const cdnPath = config('CDN_PATH') || '//cdn.auth0.com/extensions/auth0-criipto-verify-admin/assets';
+      const cdnPath = config('CDN_PATH') || 'https://raw.githubusercontent.com/GreanTech/auth0-criipto-verify-extension/master/dist/';
       return res.send(ejs.render(template, {
         config: settings,
         assets: {

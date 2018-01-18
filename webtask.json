@@ -1,6 +1,6 @@
 {
   "title": " Criipto Verify Administration",
-  "name": "auth0-criipto-verify",
+  "name": "auth0-criipto-verify-admin",
   "version": "1.0.0",
   "author": "auth0",
   "useHashName": false,
