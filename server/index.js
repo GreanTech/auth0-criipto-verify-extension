@@ -36,15 +36,15 @@ module.exports = (cfg, storageProvider) => {
   // Configure routes.
   app.use(routes.dashboardAdmins({
     secret: config('EXTENSION_SECRET'),
-    audience: 'urn:delegated-admin',
+    audience: 'urn:criipto-verify',
     rta: config('AUTH0_RTA').replace('https://', ''),
     domain: config('AUTH0_ISSUER_DOMAIN'),
     baseUrl: config('PUBLIC_WT_URL'),
     webtaskUrl: config('PUBLIC_WT_URL'),
-    clientName: 'Delegated Administration',
+    clientName: 'Criipto Verify Administration',
     urlPrefix: '/admins',
     sessionStorageKey: 'delegated-admin:apiToken',
-    scopes: 'read:clients delete:clients read:connections read:users update:users delete:users create:users read:logs read:device_credentials update:device_credentials delete:device_credentials'
+    scopes: 'read:connections create:connections'
   }));
 
   app.use('/api', api(storage));

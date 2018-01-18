@@ -1,54 +1,28 @@
 {
-  "title": "Delegated Administration Dashboard",
-  "name": "auth0-delegated-admin",
-  "version": "3.0.0",
+  "title": " Criipto Verify Administration",
+  "name": "auth0-criipto-verify",
+  "version": "1.0.0",
   "author": "auth0",
   "useHashName": false,
-  "description": "This extension allows non-dashboard administrators to manage (a subset of) users.",
+  "description": "This extension manages connections to various national e-ID schemes via Criipto Verify.",
   "type": "application",
   "category": "end_user",
   "logoUrl": "https://cdn.auth0.com/extensions/auth0-delegated-admin/assets/logo.svg",
   "initialUrlPath": "/",
   "docsUrl": "https://auth0.com/docs/extensions/delegated-admin",
-  "repository": "https://github.com/auth0-extensions/auth0-delegated-administration-extension",
+  "repository": "https://github.com/auth0-extensions/auth0-criipto-verify-extension",
   "keywords": [
     "auth0",
-    "extension"
+    "extension",
+    "criipto",
+    "verify",
+    "nemid",
+    "bankid",
+    "digid"
   ],
   "auth0": {
     "createClient": true,
     "onUninstallPath": "/.extensions/on-uninstall",
-    "scopes": "read:clients delete:clients read:connections read:users update:users delete:users create:users read:logs read:device_credentials update:device_credentials delete:device_credentials delete:guardian_enrollments"
-  },
-  "secrets": {
-    "EXTENSION_CLIENT_ID": {
-      "description": "Client ID of the application you created in the Auth0 Dashboard",
-      "required": true
-    },
-    "TITLE": {
-      "description": "Custom title for the dashboard",
-      "example": "Fabrikam User Management",
-      "required": false
-    },
-    "CUSTOM_CSS": {
-      "description": "A CSS file containing custom styles for the extension",
-      "example": "https://cdn.fabrikam.com/static/extensions/theme/fabrikam.css",
-      "required": false
-    },
-		"FEDERATED_LOGOUT": {
-      "description": "Also sign out from the IDP when users logout?",
-      "type": "select",
-      "allowMultiple": false,
-      "options": [
-        {
-          "value": "false",
-          "text": "No"
-        },
-        {
-          "value": "true",
-          "text": "Yes"
-        }
-      ]
-    }
+    "scopes": "read:connections create:connections"
   }
 }
