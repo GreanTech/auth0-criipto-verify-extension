@@ -7,10 +7,9 @@
   "description": "This extension manages connections to various national e-ID schemes via Criipto Verify.",
   "type": "application",
   "category": "end_user",
-  "logoUrl": "https://cdn.auth0.com/extensions/auth0-delegated-admin/assets/logo.svg",
+  "logoUrl": "https://www.criipto.com/images/logo-criipto-dark-3.svg",
   "initialUrlPath": "/",
-  "docsUrl": "https://auth0.com/docs/extensions/delegated-admin",
-  "repository": "https://github.com/auth0-extensions/auth0-criipto-verify-extension",
+  "repository": "https://github.com/GreanTech/auth0-criipto-verify-extension",
   "keywords": [
     "auth0",
     "extension",

@@ -5,7 +5,7 @@ const config = require('./server/lib/config');
 const logger = require('./server/lib/logger');
 
 const createServer = tools.createServer((cfg, storage) => {
-  logger.info('Starting Delegated Admin Extension - Version:', process.env.CLIENT_VERSION);
+  logger.info('Starting Criipto Verify Admin Extension - Version:', process.env.CLIENT_VERSION);
   return expressApp(cfg, storage);
 });
 

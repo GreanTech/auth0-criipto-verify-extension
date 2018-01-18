@@ -6,8 +6,8 @@ const Footer = (props) => {
       <div className="row">
         <div className="col-xs-12 text-center">
           <a href="https://manage.criipto.id" style={{textDecoration: "none", borderBottom: "none"}}>
-            <img src="https://manage.criipto.id/assets/images/criiptoverify-white.svg"/>
-            <p>Powered by Auth0 and Criipto</p>
+            <img src="https://www.criipto.com/images/logo-criipto-dark-3.svg"/>
+            <p>Powered by Auth0</p>
           </a>
         </div>
       </div>
