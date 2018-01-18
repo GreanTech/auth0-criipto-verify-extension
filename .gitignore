@@ -2,12 +2,10 @@
 .idea
 .nyc_output
 yarn-error.log
-build/bundle.js
 assets/app/*
 server/config.json
 server/config.*.json
 server/data.json
 node_modules
 npm-debug.log
-dist
 .vscode
