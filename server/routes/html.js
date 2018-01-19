@@ -44,8 +44,8 @@ export default () => {
     }
 
     const settings = {
-      AUTH0_DOMAIN: config('AUTH0_DOMAIN'),
-      AUTH0_TOKEN_ISSUER: `https://${config('AUTH0_ISSUER_DOMAIN')}/`,
+      AUTH0_DOMAIN: config('CRIIPTO_VERIFY_AUTH0_DOMAIN'),
+      AUTH0_TOKEN_ISSUER: `https://${config('CRIIPTO_VERIFY_AUTH0_DOMAIN')}/`,
       CRIIPTO_VERIFY_CLIENT_ID: config('CRIIPTO_VERIFY_CLIENT_ID'),
       EXTEND_URL: config('EXTEND_URL'),
       BASE_URL: urlHelpers.getBaseUrl(req),

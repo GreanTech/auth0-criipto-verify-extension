@@ -3,7 +3,7 @@ const logger = require('./logger');
 
 const defaultValues = {
   "CRIIPTO_VERIFY_CLIENT_ID": "aMnRpmOmyfTFzTuN1iWUmAIFgE0r16Hd",
-  "AUTH0_DOMAIN": "grean.auth0.com",
+  "CRIIPTO_VERIFY_AUTH0_DOMAIN": "grean.auth0.com",
   "CRIIPTO_VERIFY_DOMAIN": "api.grean.id"
 }
 
