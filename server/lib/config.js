@@ -14,6 +14,7 @@ const daeConfig = function(key) {
   var val = config(key);
   if (!val) {
     val = defaultValues[key];
+    console.info("Lookup in default values (key -> val)", key, val);
   }
   return val;  
 };
