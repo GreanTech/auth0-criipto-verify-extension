@@ -1,4 +1,5 @@
 const config = require('auth0-extension-tools').config();
+const logger = require('./logger');
 
 const defaultValues = {
   "CRIIPTO_VERIFY_CLIENT_ID": "aMnRpmOmyfTFzTuN1iWUmAIFgE0r16Hd",
@@ -14,7 +15,7 @@ const daeConfig = function(key) {
   var val = config(key);
   if (!val) {
     val = defaultValues[key];
-    console.info("Lookup in default values (key -> val)", key, val);
+    logger.info("Lookup in default values (key -> val)", key, val);
   }
   return val;  
 };
