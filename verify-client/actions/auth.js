@@ -9,7 +9,7 @@ const issuer = window.config.AUTH0_TOKEN_ISSUER || `https://${window.config.AUTH
 
 const webAuth = new auth0.WebAuth({ // eslint-disable-line no-undef
   domain: window.config.AUTH0_DOMAIN,
-  clientID: window.config.EXTENSION_CLIENT_ID,
+  clientID: window.config.CRIIPTO_VERIFY_CLIENT_ID,
   overrides: {
     __tenant: issuer.substr(8).split('.')[0],
     __token_issuer: issuer
@@ -46,9 +46,9 @@ export function logout() {
     sessionStorage.removeItem('criipto-verify:apiToken');
 
     if (window.config.FEDERATED_LOGOUT) {
-      window.location.href = `https://${window.config.AUTH0_DOMAIN}/v2/logout?federated&client_id=${window.config.EXTENSION_CLIENT_ID}&returnTo=${encodeURIComponent(window.config.BASE_URL)}`;
+      window.location.href = `https://${window.config.AUTH0_DOMAIN}/v2/logout?federated&client_id=${window.config.CRIIPTO_VERIFY_CLIENT_ID}&returnTo=${encodeURIComponent(window.config.BASE_URL)}`;
     } else {
-      window.location.href = `https://${window.config.AUTH0_DOMAIN}/v2/logout?client_id=${window.config.EXTENSION_CLIENT_ID}&returnTo=${encodeURIComponent(window.config.BASE_URL)}`;
+      window.location.href = `https://${window.config.AUTH0_DOMAIN}/v2/logout?client_id=${window.config.CRIIPTO_VERIFY_CLIENT_ID}&returnTo=${encodeURIComponent(window.config.BASE_URL)}`;
     }
 
     dispatch({

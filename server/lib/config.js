@@ -1,11 +1,21 @@
 const config = require('auth0-extension-tools').config();
 
+const defaultValues = {
+  "CRIIPTO_VERIFY_CLIENT_ID": "aMnRpmOmyfTFzTuN1iWUmAIFgE0r16Hd",
+  "AUTH0_DOMAIN": "grean.auth0.com",
+  "CRIIPTO_VERIFY_DOMAIN": "api.grean.id"
+}
+
 const daeConfig = function(key) {
   if (key === 'AUTH0_ISSUER_DOMAIN') {
     return config('AUTH0_ISSUER_DOMAIN') || config('AUTH0_DOMAIN');
   }
-
-  return config(key);
+  
+  var val = config(key);
+  if (!val) {
+    val = defaultValues[key];
+  }
+  return val;  
 };
 
 daeConfig.getValue = function(key) {
