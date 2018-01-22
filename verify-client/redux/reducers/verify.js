@@ -1,5 +1,4 @@
 import axios from "axios";
-import config from '../../config';
 /////////////////CONSTANTS/////////////////////
 
 const GET_VERIFY_LINKS = "GET_VERIFY_LINKS";
@@ -29,7 +28,7 @@ export const verify = (state = initial, action) => {
 /////////////// ACTION DISPATCHER FUNCTIONS///////////////////
 
 export const getVerifyLinks = () => dispatch => {
-  axios.get(config.verify.root)
+  axios.get(window.config.VERIFY_API_ROOT)
     .then((response) => {
       return response.data;
     })

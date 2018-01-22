@@ -52,6 +52,7 @@ export default () => {
       BASE_PATH: urlHelpers.getBasePath(req),
       TITLE: config('TITLE'),
       FEDERATED_LOGOUT: config('FEDERATED_LOGOUT') === 'true',
+      VERIFY_API_ROOT: 'https://' + config("CRIIPTO_VERIFY_DOMAIN")
     };
 
     // Render from CDN.
