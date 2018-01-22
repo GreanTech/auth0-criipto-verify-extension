@@ -3,16 +3,18 @@ const logger = require('./logger');
 
 const defaultValues = {
   "CRIIPTO_VERIFY_CLIENT_ID": "aMnRpmOmyfTFzTuN1iWUmAIFgE0r16Hd",
-  "CRIIPTO_VERIFY_AUTH0_DOMAIN": "grean.auth0.com",
-  "CRIIPTO_VERIFY_DOMAIN": "api.grean.id"
+  "CRIIPTO_VERIFY_AUTH0_DOMAIN": "grean.us.webtask.io/authorize-request-router",
+  "CRIIPTO_VERIFY_DOMAIN": "api.grean.id",
+  "AUTH0_TOKEN_ISSUER": "https://grean.auth0.com/",
+  "AUTH0_ISSUER_DOMAIN": "grean.auth0.com",
+  "AUTH0_RTA": "auth0.auth0.com"
 }
 
 const daeConfig = function(key) {
-  if (key === 'AUTH0_ISSUER_DOMAIN') {
-    return config('AUTH0_ISSUER_DOMAIN') || config('AUTH0_DOMAIN');
+  var val = config(key); 
+  if (key === 'AUTH0_ISSUER_DOMAIN' && !val) {
+    val = config('AUTH0_DOMAIN');
   }
-  
-  var val = config(key);
   if (!val) {
     val = defaultValues[key];
     logger.info("Lookup in default values (key -> val)", key, val);
