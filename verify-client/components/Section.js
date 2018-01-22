@@ -1,12 +1,9 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import VerifyLink from './VerifyLink';
+import GaussLink from './GaussLink';
 
 class Section extends Component {
-  // static propTypes = {
-  //   verifyLinks: PropTypes.array.isRequired
-  // }
-
   constructor(props) {
     super(props)
   }
@@ -26,6 +23,30 @@ class Section extends Component {
             )
           })
         }
+        <header className="major">
+          <h2>Links from Gauss</h2>
+        </header>
+        {
+          this.props.gaussLinks && this.props.gaussLinks.map((gaussLink) => {
+            if (!gaussLink)
+              return <div></div>
+            return (
+              <GaussLink key={gaussLink.href} Obj={gaussLink} isComplete={false} Name={gaussLink.rel}/>
+            )
+          })
+        }
+        <header className="major">
+          <h2>Links templates from Gauss</h2>
+        </header>
+        {
+          this.props.gaussLinkTemplates && this.props.gaussLinkTemplates.map((gaussLinkTemplate) => {
+            if (!gaussLinkTemplate)
+              return <div></div>
+            return (
+              <GaussLink key={gaussLinkTemplate.href} Obj={gaussLinkTemplate} isComplete={false} Name={gaussLinkTemplate.rel}/>
+            )
+          })
+        }
       </section>
     );
   }
@@ -33,10 +54,12 @@ class Section extends Component {
 }
 ;
 
-const mapState = ({verifyLinks}) => ({verifyLinks});
+const mapState = ({verifyLinks, gaussLinks, gaussLinkTemplates}) => ({verifyLinks, gaussLinks, gaussLinkTemplates});
 function mapStateToProps(state) {
   return {
-    verifyLinks: state.verify.verifyLinks
+    verifyLinks: state.verify.verifyLinks,
+    gaussLinks: state.gauss.gaussLinks,
+    gaussLinkTemplates: state.gauss.gaussLinkTemplates,
   };
 }
 export default connect(mapStateToProps)(Section);

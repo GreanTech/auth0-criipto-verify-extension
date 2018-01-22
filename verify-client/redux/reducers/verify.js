@@ -11,7 +11,7 @@ const verifyLinks = (verifyRoot) => ({type: GET_VERIFY_LINKS, verifyRoot});
 
 //initiate your starting state
 let initial = {
-  verifyLinks: []
+  verifyLinks: []  
 };
 
 export const verify = (state = initial, action) => {
