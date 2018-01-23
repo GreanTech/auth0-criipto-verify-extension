@@ -5,11 +5,13 @@ import Section from './Section';
 import Footer from './Footer';
 import {getVerifyLinks} from '../redux/reducers/verify'
 import {getVerifyTenants} from '../redux/reducers/gauss'
+import {fetchConnections} from '../actions/connection'
 
 class Home extends Component {
   static propTypes = {
     getVerifyLinks : PropTypes.func.isRequired,
-    getVerifyTenants : PropTypes.func.isRequired
+    getVerifyTenants : PropTypes.func.isRequired,
+    fetchConnections: PropTypes.func.isRequired
   }
   
   constructor(props){
@@ -19,6 +21,7 @@ class Home extends Component {
   componentWillMount() {
     this.props.getVerifyLinks();
     this.props.getVerifyTenants();
+    this.props.fetchConnections();
   }
 
   render() {
@@ -31,7 +34,7 @@ class Home extends Component {
   }
 }
 
-const mapState = ({verifyLinks, verifyTenants}) => ({verifyLinks, verifyTenants});
-const mapDispatch = {getVerifyLinks, getVerifyTenants};
+const mapState = ({verifyLinks, verifyTenants, connections}) => ({verifyLinks, verifyTenants, connections});
+const mapDispatch = {getVerifyLinks, getVerifyTenants, fetchConnections};
 
 export default connect(mapState, mapDispatch)(Home);

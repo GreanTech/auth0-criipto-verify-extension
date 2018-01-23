@@ -31,6 +31,7 @@ export default (storage) => {
   const getToken = req => _.get(req, 'headers.authorization', '').split(' ')[1];
 
   const addExtraUserInfo = (token, user) => {
+    console.log("addExtraUserInfo", token, user);
     global.daeUser = global.daeUser || {};
     global.daeUser[user.sub] = global.daeUser[user.sub] || { exp: 0, token: '' };
 
@@ -69,8 +70,10 @@ export default (storage) => {
   // Allow dashboard admins to authenticate.
   api.use(middlewares.authenticateAdmins.optional({
     credentialsRequired: false,
-    secret: config('EXTENSION_SECRET'),
-    audience: 'urn:delegated-admin',
+    // secret: config('EXTENSION_SECRET'),
+    // audience: 'urn:delegated-admin',
+    secret: config('AUTH0_CLIENT_SECRET'),
+    audience: config('AUTH0_CLIENT_ID'),
     baseUrl: config('PUBLIC_WT_URL'),
     onLoginSuccess: (req, res, next) => {
       const currentRequest = req;
@@ -92,24 +95,24 @@ export default (storage) => {
     next();
   });
 
-  api.use(requireScope(constants.USER_PERMISSION));
-  api.use('/applications', managementApiClient, applications());
+//  api.use(requireScope(constants.USER_PERMISSION));
+//  api.use('/applications', managementApiClient, applications());
   api.use('/connections', managementApiClient, connections(scriptManager));
-  api.use('/scripts', requireScope(constants.ADMIN_PERMISSION), scripts(storage, scriptManager));
-  api.use('/users', managementApiClient, users(storage, scriptManager));
-  api.use('/logs', managementApiClient, logs(scriptManager));
-  api.use('/me', me(scriptManager));
-  api.get('/settings', (req, res, next) => {
-    const settingsContext = {
-      request: {
-        user: req.user
-      }
-    };
+  // api.use('/scripts', requireScope(constants.ADMIN_PERMISSION), scripts(storage, scriptManager));
+  // api.use('/users', managementApiClient, users(storage, scriptManager));
+  // api.use('/logs', managementApiClient, logs(scriptManager));
+  // api.use('/me', me(scriptManager));
+  // api.get('/settings', (req, res, next) => {
+  //   const settingsContext = {
+  //     request: {
+  //       user: req.user
+  //     }
+  //   };
 
-    scriptManager.execute('settings', settingsContext)
-      .then(settings => res.json({ settings: settings || {} }))
-      .catch(next);
-  });
+  //   scriptManager.execute('settings', settingsContext)
+  //     .then(settings => res.json({ settings: settings || {} }))
+  //     .catch(next);
+  // });
 
   return api;
 }
