@@ -22,7 +22,7 @@ export function login(returnUrl) {
   webAuth.authorize({
     responseType: 'id_token',
     redirectUri: `${window.config.BASE_URL}/login`,
-    scope: 'openid roles'
+    scope: 'openid email name'
   });
 
   return {

@@ -4,6 +4,10 @@ import VerifyLink from './VerifyLink';
 import VerifyTenant from './VerifyTenant';
 
 class Section extends Component {
+  static propTypes = {
+    user: PropTypes.object
+  };
+
   constructor(props) {
     super(props)
   }
@@ -11,6 +15,9 @@ class Section extends Component {
   render() {
     return (
       <section id="one" className="wrapper style2 special flow">
+        <header className="major">
+          <h2>Hi there, {this.props.user.get("name")} (email: {this.props.user.get("email")})</h2>
+        </header>
         <header className="major">
           <h2>Links from Criipto Verify root</h2>
         </header>
@@ -46,6 +53,7 @@ class Section extends Component {
 const mapState = ({verifyLinks, verifyTenants}) => ({verifyLinks, verifyTenants});
 function mapStateToProps(state) {
   return {
+    user: state.auth.get('user'),
     verifyLinks: state.verify.verifyLinks,
     verifyTenants: state.gauss.verifyTenants
   };
