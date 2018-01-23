@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import VerifyLink from './VerifyLink';
-import GaussLink from './GaussLink';
+import VerifyTenant from './VerifyTenant';
 
 class Section extends Component {
   constructor(props) {
@@ -24,26 +24,15 @@ class Section extends Component {
           })
         }
         <header className="major">
-          <h2>Links from Gauss</h2>
+          <h2>Existing Verify Tenants (from Gauss)</h2>
         </header>
         {
-          this.props.gaussLinks && this.props.gaussLinks.map((gaussLink) => {
-            if (!gaussLink)
+          this.props.verifyTenants && this.props.verifyTenants.map((verifyTenant) => {
+            var org = verifyTenant.organization;
+            if (!org)
               return <div></div>
             return (
-              <GaussLink key={gaussLink.href} Obj={gaussLink} isComplete={false} Name={gaussLink.rel}/>
-            )
-          })
-        }
-        <header className="major">
-          <h2>Links templates from Gauss</h2>
-        </header>
-        {
-          this.props.gaussLinkTemplates && this.props.gaussLinkTemplates.map((gaussLinkTemplate) => {
-            if (!gaussLinkTemplate)
-              return <div></div>
-            return (
-              <GaussLink key={gaussLinkTemplate.href} Obj={gaussLinkTemplate} isComplete={false} Name={gaussLinkTemplate.rel}/>
+              <VerifyTenant key={org.entityIdentifier} Obj={org} isComplete={false} Name={org.name}/>
             )
           })
         }
@@ -54,12 +43,11 @@ class Section extends Component {
 }
 ;
 
-const mapState = ({verifyLinks, gaussLinks, gaussLinkTemplates}) => ({verifyLinks, gaussLinks, gaussLinkTemplates});
+const mapState = ({verifyLinks, verifyTenants}) => ({verifyLinks, verifyTenants});
 function mapStateToProps(state) {
   return {
     verifyLinks: state.verify.verifyLinks,
-    gaussLinks: state.gauss.gaussLinks,
-    gaussLinkTemplates: state.gauss.gaussLinkTemplates,
+    verifyTenants: state.gauss.verifyTenants
   };
 }
 export default connect(mapStateToProps)(Section);

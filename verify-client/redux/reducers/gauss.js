@@ -1,31 +1,25 @@
 import axios from "axios";
+import _ from 'lodash'; 
 /////////////////CONSTANTS/////////////////////
 
-const GET_GAUSS_LINKS = "GET_GAUSS_LINKS";
+const GET_VERIFY_TENANTS = "GET_VERIFY_TENANTS";
 
 /////////////////ACTIONS//////////////
 
-const gaussLinks = (gaussRoot) => ({type: GET_GAUSS_LINKS, gaussRoot});
+const verifyTenants = (tenants) => ({type: GET_VERIFY_TENANTS, verifyTenants : tenants});
 
 /////////////////REDUCER/////////////////////
 
 //initiate your starting state
 let initial = {
-  gaussLinks: [],
-  gaussLinkTemplates: []
+  verifyTenants: []
 };
 
 export const gauss = (state = initial, action) => {
 
   switch (action.type) {
-    case GET_GAUSS_LINKS:
-      return Object.assign(
-            {}, 
-            state, 
-            {
-                gaussLinks: action.gaussRoot.links, 
-                gaussLinkTemplates: action.gaussRoot.linkTemplates
-            });
+    case GET_VERIFY_TENANTS:
+      return _.assign({}, state, { verifyTenants: action.verifyTenants });
     default:
       return state;
   }
@@ -34,13 +28,30 @@ export const gauss = (state = initial, action) => {
 
 /////////////// ACTION DISPATCHER FUNCTIONS///////////////////
 
-export const getGaussLinks = () => dispatch => {
+const getPayload = (response) => { return response.data; }
+export const getVerifyTenants = () => dispatch => {
   axios.get(window.config.GAUSS_API_ROOT)
     .then((response) => {
       return response.data;
     })
     .then((gaussRoot) => {
-      dispatch(gaussLinks(gaussRoot))
+        var scopedClaimsLink = _.find(gaussRoot.linkTemplates, { 'rel': 'gauss:scoped-user-claims' });
+        if (scopedClaimsLink)
+        {
+            // User has already onboarded before
+            var scopedClaimsRef = scopedClaimsLink.href.replace('{application}', window.btoa(window.config.VERIFY_GAUSS_APP_ID));
+            return axios.get(scopedClaimsRef)
+                .then(getPayload)
+                .then((scopedClaims) => { return scopedClaims.claimScopes; });
+        } 
+        else
+        {
+            // Unknown user
+            return [];
+        }
+    })
+    .then((claimScopes) => {
+      dispatch(verifyTenants(claimScopes))
     })
     .catch((err) => {
       console.error.bind(err);

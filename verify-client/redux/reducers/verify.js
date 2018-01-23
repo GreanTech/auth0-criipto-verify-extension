@@ -1,4 +1,5 @@
 import axios from "axios";
+import _ from 'lodash'; 
 /////////////////CONSTANTS/////////////////////
 
 const GET_VERIFY_LINKS = "GET_VERIFY_LINKS";
@@ -18,7 +19,7 @@ export const verify = (state = initial, action) => {
 
   switch (action.type) {
     case GET_VERIFY_LINKS:
-      return Object.assign({}, state, {verifyLinks: action.verifyRoot.links});
+      return _.assign({}, state, {verifyLinks: action.verifyRoot.links});
     default:
       return state;
   }

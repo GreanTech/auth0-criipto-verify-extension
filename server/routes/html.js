@@ -53,7 +53,8 @@ export default () => {
       TITLE: config('TITLE'),
       FEDERATED_LOGOUT: config('FEDERATED_LOGOUT') === 'true',
       VERIFY_API_ROOT: 'https://' + config("CRIIPTO_VERIFY_DOMAIN"),
-      GAUSS_API_ROOT: 'https://' + config("GAUSS_DOMAIN")
+      GAUSS_API_ROOT: 'https://' + config("GAUSS_DOMAIN"),
+      VERIFY_GAUSS_APP_ID : config('VERIFY_GAUSS_APP_ID')
     };
 
     // Render from CDN.
