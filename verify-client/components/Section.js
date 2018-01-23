@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import VerifyLink from './VerifyLink';
 import VerifyTenant from './VerifyTenant';
 import Connection from './Connection';
+import { toJS } from 'immutable';
 
 class Section extends Component {
   static propTypes = {
@@ -27,7 +28,7 @@ class Section extends Component {
             if (!connection)
               return <div></div>
             return (
-              <Connection key={connection.id} Obj={connection} isComplete={false} Name={connection.name}/>
+              <Connection key={connection.id} id={connection.id} Name={connection.name}/>
             )
           })
         }
@@ -63,12 +64,13 @@ class Section extends Component {
 }
 ;
 
-const mapState = ({verifyLinks, verifyTenants}) => ({verifyLinks, verifyTenants});
+const mapState = ({verifyLinks, verifyTenants, connections}) => ({verifyLinks, verifyTenants, connections});
 function mapStateToProps(state) {
   return {
     user: state.auth.get('user'),
     verifyLinks: state.verify.verifyLinks,
-    verifyTenants: state.gauss.verifyTenants
+    verifyTenants: state.gauss.verifyTenants,
+    connections: state.connections.get("records").toJS()
   };
 }
 export default connect(mapStateToProps)(Section);
