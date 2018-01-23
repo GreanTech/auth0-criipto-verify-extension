@@ -8,7 +8,7 @@
   "type": "application",
   "category": "end_user",
   "logoUrl": "https://www.criipto.com/images/logo-criipto-dark-3.svg",
-  "initialUrlPath": "/",
+  "initialUrlPath": "/admins/login",
   "repository": "https://github.com/GreanTech/auth0-criipto-verify-extension",
   "keywords": [
     "auth0",

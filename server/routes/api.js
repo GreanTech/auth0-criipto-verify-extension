@@ -71,7 +71,7 @@ export default (storage) => {
   api.use(middlewares.authenticateAdmins.optional({
     credentialsRequired: false,
     // secret: config('EXTENSION_SECRET'),
-    // audience: 'urn:delegated-admin',
+    // audience: 'urn:criipto-verify',
     secret: config('AUTH0_CLIENT_SECRET'),
     audience: config('AUTH0_CLIENT_ID'),
     baseUrl: config('PUBLIC_WT_URL'),
@@ -95,9 +95,9 @@ export default (storage) => {
     next();
   });
 
-//  api.use(requireScope(constants.USER_PERMISSION));
+  api.use(requireScope(constants.ADMIN_PERMISSION));
 //  api.use('/applications', managementApiClient, applications());
-  api.use('/connections', managementApiClient, connections(scriptManager));
+  api.use('/connections', managementApiClient, connections(storage));
   // api.use('/scripts', requireScope(constants.ADMIN_PERMISSION), scripts(storage, scriptManager));
   // api.use('/users', managementApiClient, users(storage, scriptManager));
   // api.use('/logs', managementApiClient, logs(scriptManager));
