@@ -1,7 +1,8 @@
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
-const config = require('./config.dev.js');
+const cfgEnv = process.env.NODE_ENV === 'development' ? 'dev' : 'prod';
+const config = require('./config.' + cfgEnv + '.js');
 const logger = require('../../server/lib/logger');
 
 const options = {

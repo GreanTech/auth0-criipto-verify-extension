@@ -11,6 +11,11 @@ import configureStore from './redux/store';
 // import * as auth from './actions/auth';
 import { loadCredentials } from './actions/auth';
 
+import axios from 'axios';
+
+// Make axios aware of the base path.
+axios.defaults.baseURL = window.config.BASE_URL;
+
 const history = useRouterHistory(createHistory)({
     basename: window.config.BASE_PATH || ''
   });

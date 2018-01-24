@@ -19,7 +19,7 @@ gulp.task('run', () => {
       env: {
         EXTENSION_SECRET: 'mysecret',
         AUTH0_RTA: 'https://auth0.auth0.com',
-        NODE_ENV: 'development',
+        NODE_ENV: process.env.NODE_ENV || 'development',
         WT_URL: url,
         PUBLIC_WT_URL: url
       },

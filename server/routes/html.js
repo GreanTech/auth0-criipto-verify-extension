@@ -47,7 +47,7 @@ export default () => {
       CRIIPTO_VERIFY_CLIENT_ID: config('CRIIPTO_VERIFY_CLIENT_ID'),
       CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER: config('CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER'),
       EXTEND_URL: config('EXTEND_URL'),
-      BASE_URL: urlHelpers.getBaseUrl(req),
+      BASE_URL: config('GALLERY_WT_URL') || urlHelpers.getBaseUrl(req),
       BASE_PATH: urlHelpers.getBasePath(req),
       TITLE: config('TITLE'),
       FEDERATED_LOGOUT: config('FEDERATED_LOGOUT') === 'true',

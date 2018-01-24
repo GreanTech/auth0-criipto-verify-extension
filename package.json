@@ -13,6 +13,7 @@
     "extension:build": "a0-ext build:server ./webtask.js ./dist && cp ./dist/auth0-criipto-verify-admin.extension.$npm_package_version.js ./build/bundle.js",
     "serve:dev:orig": "cross-env NODE_ENV=development nodemon -e js --ignore assets/app/ --ignore build/webpack/ --ignore client/ --ignore server/data.json --ignore node_modules/ ./build/webpack/server.js",
     "serve:dev": "cross-env NODE_ENV=development gulp run --gulpfile ./build/gulpfile.js",
+    "serve:prod:ngrok": "cross-env NODE_ENV=production gulp run --gulpfile ./build/gulpfile.js",
     "serve:prod": "cross-env NODE_ENV=production node index.js",
     "test": "cross-env NODE_ENV=test nyc mocha tests/mocha.js './tests/**/*.tests.js'",
     "test:watch": "cross-env NODE_ENV=test mocha tests/mocha.js './tests/**/*.tests.js' --watch",
