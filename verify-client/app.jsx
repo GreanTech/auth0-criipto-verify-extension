@@ -25,3 +25,11 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('app')
 );
+
+// Show the developer tools.
+if (process.env.NODE_ENV !== 'production') {
+  console.log("Trying to launch devTools");
+  const showDevTools = require('./showDevTools'); // eslint-disable-line global-require
+
+  showDevTools(store);
+}
