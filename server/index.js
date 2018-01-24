@@ -33,18 +33,18 @@ module.exports = (cfg, storageProvider) => {
   app.use(bodyParser.urlencoded({ extended: false }));
 
   // Configure routes.
-  // app.use(routes.dashboardAdmins({
-  //   secret: config('EXTENSION_SECRET'),
-  //   audience: 'urn:criipto-verify',
-  //   rta: config('AUTH0_RTA').replace('https://', ''),
-  //   domain: config('AUTH0_ISSUER_DOMAIN'),
-  //   baseUrl: config('PUBLIC_WT_URL'),
-  //   webtaskUrl: config('PUBLIC_WT_URL'),
-  //   clientName: 'Criipto Verify Administration',
-  //   urlPrefix: '/admins',
-  //   sessionStorageKey: 'delegated-admin:apiToken',
-  //   scopes: 'read:connections create:connections'
-  // }));
+  app.use(routes.dashboardAdmins({
+    secret: config('EXTENSION_SECRET'),
+    audience: 'urn:criipto-verify',
+    rta: config('AUTH0_RTA').replace('https://', ''),
+    domain: config('AUTH0_ISSUER_DOMAIN'),
+    baseUrl: config('PUBLIC_WT_URL'),
+    webtaskUrl: config('PUBLIC_WT_URL'),
+    clientName: 'Criipto Verify Administration',
+    urlPrefix: '/admins',
+    sessionStorageKey: 'delegated-admin:apiToken',
+    scopes: 'read:connections create:connections'
+  }));
 
   app.use('/api', api(storage));
   app.use('/app', Express.static(path.join(__dirname, '../dist')));
