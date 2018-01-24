@@ -11,6 +11,8 @@ const createServer = tools.createServer((cfg, storage) => {
 });
 
 module.exports = (context, req, res) => {
-  config.setValue('PUBLIC_WT_URL', tools.urlHelpers.getWebtaskUrl(req));
+  var publicWebtaskUrl = tools.urlHelpers.getWebtaskUrl(req);
+  logger.info('Using PUBLIC_WT_URL: ', publicWebtaskUrl);
+  config.setValue('PUBLIC_WT_URL', publicWebtaskUrl);
   createServer(context, req, res);
 };
