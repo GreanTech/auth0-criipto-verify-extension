@@ -4,22 +4,11 @@ import moment from 'moment';
 import { middlewares } from 'auth0-extension-express-tools';
 import tools from 'auth0-extension-tools';
 
-import { requireScope } from '../lib/middlewares';
 import config from '../lib/config';
 
-import ScriptManager from '../lib/scriptmanager';
-import getScopes from '../lib/getScopes';
-import * as constants from '../constants';
-
-import applications from './applications';
 import connections from './connections';
-import scripts from './scripts';
-import me from './me';
-import logs from './logs';
-import users from './users';
 
 export default (storage) => {
-  const scriptManager = new ScriptManager(storage);
   const managementApiClient = middlewares.managementApiClient({
     domain: config('AUTH0_ISSUER_DOMAIN'),
     clientId: config('AUTH0_CLIENT_ID'),
