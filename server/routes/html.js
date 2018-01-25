@@ -42,13 +42,14 @@ export default () => {
       return next();
     }
 
+    var basePath = (urlHelpers.getBasePath(req) || '').replace(/\/$/, '');
     const settings = {
       CRIIPTO_VERIFY_AUTH0_DOMAIN: config('CRIIPTO_VERIFY_AUTH0_DOMAIN'),
       CRIIPTO_VERIFY_CLIENT_ID: config('CRIIPTO_VERIFY_CLIENT_ID'),
       CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER: config('CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER'),
       EXTEND_URL: config('EXTEND_URL'),
       BASE_URL: config('GALLERY_WT_URL') || urlHelpers.getBaseUrl(req),
-      BASE_PATH: urlHelpers.getBasePath(req),
+      BASE_PATH: basePath,
       TITLE: config('TITLE'),
       FEDERATED_LOGOUT: config('FEDERATED_LOGOUT') === 'true',
       VERIFY_API_ROOT: 'https://' + config("CRIIPTO_VERIFY_DOMAIN"),
