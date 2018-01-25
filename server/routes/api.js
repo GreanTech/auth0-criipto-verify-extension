@@ -30,61 +30,12 @@ export default (storage) => {
 
   const getToken = req => _.get(req, 'headers.authorization', '').split(' ')[1];
 
-  const addExtraUserInfo = (token, user) => {
-    console.log("addExtraUserInfo", token, user);
-    global.daeUser = global.daeUser || {};
-    global.daeUser[user.sub] = global.daeUser[user.sub] || { exp: 0, token: '' };
-
-    if (_.isFunction(global.daeUser[user.sub].then)) {
-      return global.daeUser[user.sub];
-    }
-
-    if (global.daeUser[user.sub].exp > moment().unix() && token &&
-      global.daeUser[user.sub].token === token) {
-      _.assign(user, global.daeUser[user.sub]);
-      return Promise.resolve(user);
-    }
-
-    if (!token) console.error('no token found');
-
-    const promise = tools.managementApi.getClient({
-      domain: config('AUTH0_ISSUER_DOMAIN'),
-      clientId: config('AUTH0_CLIENT_ID'),
-      clientSecret: config('AUTH0_CLIENT_SECRET')
-    })
-      .then(auth0 =>
-        auth0.users.get({ id: user.sub })
-          .then(userData => {
-            _.assign(user, userData);
-            user.token = token;
-            global.daeUser[user.sub] = user;
-            return user;
-          })
-      );
-
-    global.daeUser[user.sub] = promise;
-
-    return global.daeUser[user.sub];
-  };
-
-  // Allow dashboard admins to authenticate.
-  api.use(middlewares.authenticateAdmins.optional({
+  // Allow only dashboard admins.
+  api.use(middlewares.authenticateAdmins({
     credentialsRequired: false,
-    // secret: config('EXTENSION_SECRET'),
-    // audience: 'urn:criipto-verify',
-    secret: config('AUTH0_CLIENT_SECRET'),
-    audience: config('AUTH0_CLIENT_ID'),
-    baseUrl: config('PUBLIC_WT_URL'),
-    onLoginSuccess: (req, res, next) => {
-      const currentRequest = req;
-      return addExtraUserInfo(getToken(req), req.user)
-        .then((user) => {
-          currentRequest.user = user;
-          currentRequest.user.scope = [constants.USER_PERMISSION, constants.ADMIN_PERMISSION];
-          return next();
-        })
-        .catch(next);
-    }
+    secret: config('EXTENSION_SECRET'),
+    audience: 'urn:criipto-verify',
+    baseUrl: config('PUBLIC_WT_URL')
   }));
 
   /* Fight caching attempts by IE */
@@ -95,24 +46,7 @@ export default (storage) => {
     next();
   });
 
-  api.use(requireScope(constants.ADMIN_PERMISSION));
-//  api.use('/applications', managementApiClient, applications());
   api.use('/connections', managementApiClient, connections(storage));
-  // api.use('/scripts', requireScope(constants.ADMIN_PERMISSION), scripts(storage, scriptManager));
-  // api.use('/users', managementApiClient, users(storage, scriptManager));
-  // api.use('/logs', managementApiClient, logs(scriptManager));
-  // api.use('/me', me(scriptManager));
-  // api.get('/settings', (req, res, next) => {
-  //   const settingsContext = {
-  //     request: {
-  //       user: req.user
-  //     }
-  //   };
-
-  //   scriptManager.execute('settings', settingsContext)
-  //     .then(settings => res.json({ settings: settings || {} }))
-  //     .catch(next);
-  // });
 
   return api;
 }
