@@ -7,7 +7,6 @@ import RequireAuthentication from '../containers/RequireAuthentication'
 export default (history) => {
   return (
     <Router history={history}>
-        <Route path="" component={RequireAuthentication(Home)} />
         <Route path="/" component={RequireAuthentication(Home)} />
         <Route path="/login" component={Login} />
     </Router>
