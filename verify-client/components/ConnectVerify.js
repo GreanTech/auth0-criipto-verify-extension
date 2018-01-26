@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router'
+import Header from './Header';
 import Footer from './Footer';
 
 const ConnectVerify = (props) => {
@@ -9,6 +10,7 @@ const ConnectVerify = (props) => {
 
     return (
         <div>
+            <Header/>
             <section className="row">
                 <div className="col-xs-12 text-center">
                     <section id="connect-verify" className="wrapper style2 special flow">
@@ -34,7 +36,6 @@ const ConnectVerify = (props) => {
                     </section>
                 </div>
             </section>
-            <hr />
             <Footer/>
         </div>
         )

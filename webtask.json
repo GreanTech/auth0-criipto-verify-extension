@@ -20,16 +20,6 @@
   ],
   "auth0": {
     "createClient": true,
-    "scopes": "read:connections create:connections",
-    "criipto" : {
-      "verify" : {
-        "idServiceDisplayName" : "Danish NemID",
-        "acrValues" : [
-          "urn:grn:authn:dk:nemid:poces",
-          "urn:grn:authn:dk:nemid:moces",
-          "urn:grn:authn:dk:nemid:moces:codefile"      
-        ]
-      }
-    }
+    "scopes": "read:connections create:connections"
   }
 }

@@ -5,6 +5,7 @@ import { urlHelpers } from 'auth0-extension-express-tools';
 
 import config from '../lib/config';
 import metadata from '../../webtask.json';
+import * as constants from '../constants'
 
 export default () => {
   const template = `
@@ -38,13 +39,14 @@ export default () => {
     </html>
     `;
 
+  const idServiceProfile = constants.ID_SERVICE_PROFILES[metadata.name];
+
   return (req, res, next) => {
     if (req.url.indexOf('/api') === 0) {
       return next();
     }
 
     var basePath = (urlHelpers.getBasePath(req) || '').replace(/\/$/, '');
-    var verifyMetadata = (metadata.auth0.criipto || {}).verify || {};
     const settings = {
       CRIIPTO_VERIFY_AUTH0_DOMAIN: config('CRIIPTO_VERIFY_AUTH0_DOMAIN'),
       CRIIPTO_VERIFY_CLIENT_ID: config('CRIIPTO_VERIFY_CLIENT_ID'),
@@ -57,7 +59,8 @@ export default () => {
       VERIFY_API_ROOT: 'https://' + config("CRIIPTO_VERIFY_DOMAIN"),
       GAUSS_API_ROOT: 'https://' + config("GAUSS_DOMAIN"),
       VERIFY_GAUSS_APP_ID : config('VERIFY_GAUSS_APP_ID'),
-      CRIIPTO_VERIFY_AUTHMETHOD_NAME: verifyMetadata.idServiceDisplayName
+      CRIIPTO_VERIFY_AUTHMETHOD_NAME: idServiceProfile.displayName,
+      CRIIPTO_VERIFY_AUTHMETHOD_LOGO: idServiceProfile.logo,
     };
 
     // Render from CDN.
