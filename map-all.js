@@ -12,8 +12,8 @@ var constants = require('./server/constants');
         var value = constants.ID_SERVICE_PROFILES[key];
         var delta = { 
             name: key, 
-            logoUrl: value.logo, 
-            repository : baseline.repository + value.subpath,
+            logoUrl: value.logo,
+            codeUrl: 'https://raw.githubusercontent.com/GreanTech/auth0-criipto-verify-extension/master/build/' + value.subpath + '/build/bundle.js',
             description : value.description
         };
         var webtaskConfig = Object.assign({}, baseline, delta);
