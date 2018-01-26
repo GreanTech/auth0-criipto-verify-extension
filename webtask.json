@@ -1,5 +1,5 @@
 {
-  "title": " Criipto Verify Administration",
+  "title": "Criipto Verify Administration",
   "name": "auth0-criipto-verify-admin",
   "version": "1.0.0",
   "author": "auth0",
@@ -20,16 +20,16 @@
   ],
   "auth0": {
     "createClient": true,
-    "scopes": "read:connections create:connections"
-  },
-  "criipto" : {
-    "verify" : {
-      "idServiceDisplayName" : "Danish NemID",
-      "acrValues" : [
-        "urn:grn:authn:dk:nemid:poces",
-        "urn:grn:authn:dk:nemid:moces",
-        "urn:grn:authn:dk:nemid:moces:codefile"      
-      ]
+    "scopes": "read:connections create:connections",
+    "criipto" : {
+      "verify" : {
+        "idServiceDisplayName" : "Danish NemID",
+        "acrValues" : [
+          "urn:grn:authn:dk:nemid:poces",
+          "urn:grn:authn:dk:nemid:moces",
+          "urn:grn:authn:dk:nemid:moces:codefile"      
+        ]
+      }
     }
   }
 }
