@@ -11,6 +11,7 @@ var constants = require('./server/constants');
     Object.keys(constants.ID_SERVICE_PROFILES).forEach((key) => {
         var value = constants.ID_SERVICE_PROFILES[key];
         var delta = { 
+            title: 'Criipto Verify - ' + value.displayName,
             name: key, 
             logoUrl: value.logo,
             codeUrl: 'https://raw.githubusercontent.com/GreanTech/auth0-criipto-verify-extension/master/build/' + value.subpath + '/build/bundle.js',
