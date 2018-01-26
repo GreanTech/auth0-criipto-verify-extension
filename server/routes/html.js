@@ -5,7 +5,7 @@ import { urlHelpers } from 'auth0-extension-express-tools';
 
 import config from '../lib/config';
 import metadata from '../../webtask.json';
-import * as constants from '../constants'
+var constants = require('../constants');
 
 export default () => {
   const template = `

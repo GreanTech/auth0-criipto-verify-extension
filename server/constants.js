@@ -1,5 +1,5 @@
-module.exports = { 
-    ID_SERVICE_PROFILES : {
+module.exports = {
+    ID_SERVICE_PROFILES: {
         'auth0-criipto-verify-admin-dk-nemid': {
             'displayName': "Danish NemID",
             'logo': 'https://www.criipto.com/images/logo-e-id-dk-nemid.svg',
@@ -42,6 +42,25 @@ module.exports = {
             ],
             'subpath': 'nldigid',
             'description': 'This extension manages connections to Dutch DigiD via Criipto Verify.'
+        },
+        'auth0-criipto-verify-admin': {
+            'displayName': "",
+            'logo': 'https://www.criipto.com/images/logo-criipto-dark-3.svg',
+            'acrValues': [
+                "urn:grn:authn:dk:nemid:poces",
+                "urn:grn:authn:dk:nemid:moces",
+                "urn:grn:authn:dk:nemid:moces:codefile",
+                "urn:grn:authn:se:bankid:same-device",
+                "urn:grn:authn:se:bankid:another-device",
+                "urn:grn:authn:no:bankid:central",
+                "urn:grn:authn:no:bankid:mobile",
+                "urn:grn:authn:nl:digid:basic",
+                "urn:grn:authn:nl:digid:middle",
+                "urn:grn:authn:nl:digid:substantial",
+                "urn:grn:authn:nl:digid:high"
+            ],
+            'subpath': 'all',
+            'description': 'This extension manages various e-ID connections via Criipto Verify.'
         }
     }
 };
