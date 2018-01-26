@@ -28,6 +28,7 @@ class Home extends Component {
     return (
       <div>
         <Section/>
+        <hr />
         <Footer/>
       </div>
     )

@@ -6,7 +6,6 @@
   "useHashName": false,
   "description": "This extension manages connections to various national e-ID schemes via Criipto Verify.",
   "type": "application",
-  "category": "end_user",
   "logoUrl": "https://www.criipto.com/images/logo-criipto-dark-3.svg",
   "initialUrlPath": "/admins/login",
   "repository": "https://github.com/GreanTech/auth0-criipto-verify-extension",
@@ -22,5 +21,15 @@
   "auth0": {
     "createClient": true,
     "scopes": "read:connections create:connections"
+  },
+  "criipto" : {
+    "verify" : {
+      "idServiceDisplayName" : "Danish NemID",
+      "acrValues" : [
+        "urn:grn:authn:dk:nemid:poces",
+        "urn:grn:authn:dk:nemid:moces",
+        "urn:grn:authn:dk:nemid:moces:codefile"      
+      ]
+    }
   }
 }

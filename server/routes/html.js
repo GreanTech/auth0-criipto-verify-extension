@@ -4,6 +4,7 @@ import path from 'path';
 import { urlHelpers } from 'auth0-extension-express-tools';
 
 import config from '../lib/config';
+import metadata from '../../webtask.json';
 
 export default () => {
   const template = `
@@ -54,7 +55,8 @@ export default () => {
       FEDERATED_LOGOUT: config('FEDERATED_LOGOUT') === 'true',
       VERIFY_API_ROOT: 'https://' + config("CRIIPTO_VERIFY_DOMAIN"),
       GAUSS_API_ROOT: 'https://' + config("GAUSS_DOMAIN"),
-      VERIFY_GAUSS_APP_ID : config('VERIFY_GAUSS_APP_ID')
+      VERIFY_GAUSS_APP_ID : config('VERIFY_GAUSS_APP_ID'),
+      CRIIPTO_VERIFY_AUTHMETHOD_NAME: ((metadata.criipto || {}).verify || {}).idServiceDisplayName
     };
 
     // Render from CDN.
