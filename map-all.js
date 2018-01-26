@@ -18,7 +18,7 @@ var constants = require('./server/constants');
         };
         var webtaskConfig = Object.assign({}, baseline, delta);
         var idSvcBuildDir = path.join(thisDir, 'build', value.subpath);
-        var targetBundleDir = path.join(idSvcBuildDir, 'bundle');
+        var targetBundleDir = path.join(idSvcBuildDir, 'build');
         fs.ensureDir(targetBundleDir, function(err) {
             if (err) {
                 console.error(err);
