@@ -38,7 +38,7 @@ module.exports = (cfg, storageProvider) => {
     audience: 'urn:criipto-verify',
     rta: config('AUTH0_RTA').replace('https://', ''),
     domain: config('AUTH0_ISSUER_DOMAIN'),
-    baseUrl: config('PUBLIC_WT_URL'),
+    baseUrl: config('PUBLIC_WT_URL').replace(/\/$/g, ''),
     webtaskUrl: config('PUBLIC_WT_URL'),
     clientName: 'Criipto Verify Administration',
     urlPrefix: '/admins',
