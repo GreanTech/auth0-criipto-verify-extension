@@ -46,6 +46,13 @@ export default () => {
       return next();
     }
 
+    var idServiceProfileKey = config('AUTH0-EXTENSION-NAME');
+    if (req.webtaskContext) {
+      idServiceProfileKey = req.webtaskContext.meta.auth0-extension-name;
+    }
+
+    const idServiceProfile = constants.ID_SERVICE_PROFILES[idServiceProfileKey];
+
     var basePath = (urlHelpers.getBasePath(req) || '').replace(/\/$/, '');
     const settings = {
       CRIIPTO_VERIFY_AUTH0_DOMAIN: config('CRIIPTO_VERIFY_AUTH0_DOMAIN'),
