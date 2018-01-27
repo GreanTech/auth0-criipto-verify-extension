@@ -22,6 +22,7 @@ module.exports = (cfg, storageProvider) => {
   app.use((req, res, next) => {
     if (req.webtaskContext) {
       config.setProvider(tools.configProvider.fromWebtaskContext(req.webtaskContext));
+      console.log("req.webtaskContext", req.webtaskContext);
     }
 
     next();

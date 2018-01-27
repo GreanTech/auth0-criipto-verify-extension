@@ -11,7 +11,6 @@ const createServer = tools.createServer((cfg, storage) => {
 });
 
 module.exports = (context, req, res) => {
-  console.log("req.webtaskContext", req.webtaskContext);
   var publicWebtaskUrl = tools.urlHelpers.getWebtaskUrl(req);
   if (!publicWebtaskUrl.endsWith('/')) {
     publicWebtaskUrl = publicWebtaskUrl + '/';
