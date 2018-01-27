@@ -15,7 +15,6 @@ module.exports = (context, req, res) => {
   if (!publicWebtaskUrl.endsWith('/')) {
     publicWebtaskUrl = publicWebtaskUrl + '/';
   }
-  logger.info('Using PUBLIC_WT_URL: ', publicWebtaskUrl);
   config.setValue('PUBLIC_WT_URL', publicWebtaskUrl);
   createServer(context, req, res);
 };
