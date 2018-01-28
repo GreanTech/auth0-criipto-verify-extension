@@ -1,6 +1,7 @@
 var fs = require('fs-extra')
 var path = require('path');
 var baseline = require('./webtask.json');
+var metaPatch = require('./server/lib/metaPatch');
 
 var constants = require('./server/constants');
 
@@ -10,15 +11,7 @@ var constants = require('./server/constants');
     console.info('Creating Identity Service specific extension bundles', thisDir);
     Object.keys(constants.ID_SERVICE_PROFILES).forEach((key) => {
         var value = constants.ID_SERVICE_PROFILES[key];
-        var repo = 'https://raw.githubusercontent.com/GreanTech/auth0-criipto-verify-extension/master/build/' + value.subpath;
-        var delta = { 
-            title: 'Criipto Verify - ' + value.displayName,
-            name: key, 
-            logoUrl: value.logo,
-            repository: repo,
-            codeUrl: repo + '/build/bundle.js',
-            description : value.description
-        };
+        var delta = metaPatch(key, value);
         var webtaskConfig = Object.assign({}, baseline, delta);
         var idSvcBuildDir = path.join(thisDir, 'build', value.subpath);
         var targetBundleDir = path.join(idSvcBuildDir, 'build');

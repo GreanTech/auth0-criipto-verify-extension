@@ -6,6 +6,7 @@ import { urlHelpers } from 'auth0-extension-express-tools';
 import config from '../lib/config';
 import metadata from '../../webtask.json';
 var constants = require('../constants');
+var ext = require('../lib/extension');
 
 export default () => {
   const template = `
@@ -39,18 +40,12 @@ export default () => {
     </html>
     `;
 
-  const idServiceProfile = constants.ID_SERVICE_PROFILES[metadata.name];
-
   return (req, res, next) => {
     if (req.url.indexOf('/api') === 0) {
       return next();
     }
 
-    var idServiceProfileKey = config('AUTH0-EXTENSION-NAME');
-    if (req.webtaskContext) {
-      idServiceProfileKey = req.webtaskContext.meta['auth0-extension-name'];
-    }
-
+    var idServiceProfileKey = ext.name(req);
     const idServiceProfile = constants.ID_SERVICE_PROFILES[idServiceProfileKey];
 
     var basePath = (urlHelpers.getBasePath(req) || '').replace(/\/$/, '');
