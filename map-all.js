@@ -10,15 +10,16 @@ var constants = require('./server/constants');
     console.info('Creating Identity Service specific extension bundles', thisDir);
     Object.keys(constants.ID_SERVICE_PROFILES).forEach((key) => {
         var value = constants.ID_SERVICE_PROFILES[key];
+        var repo = 'https://raw.githubusercontent.com/GreanTech/auth0-criipto-verify-extension/master/build/' + value.subpath;
         var delta = { 
             title: 'Criipto Verify - ' + value.displayName,
             name: key, 
             logoUrl: value.logo,
-            codeUrl: 'https://raw.githubusercontent.com/GreanTech/auth0-criipto-verify-extension/master/build/' + value.subpath + '/build/bundle.js',
+            repository: repo,
+            codeUrl: repo + '/build/bundle.js',
             description : value.description
         };
         var webtaskConfig = Object.assign({}, baseline, delta);
-        delete webtaskConfig.repository;
         var idSvcBuildDir = path.join(thisDir, 'build', value.subpath);
         var targetBundleDir = path.join(idSvcBuildDir, 'build');
         fs.ensureDir(targetBundleDir, function(err) {
