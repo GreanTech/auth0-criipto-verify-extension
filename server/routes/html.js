@@ -48,7 +48,7 @@ export default () => {
 
     var idServiceProfileKey = config('AUTH0-EXTENSION-NAME');
     if (req.webtaskContext) {
-      idServiceProfileKey = req.webtaskContext.meta.auth0-extension-name;
+      idServiceProfileKey = req.webtaskContext.meta['auth0-extension-name'];
     }
 
     const idServiceProfile = constants.ID_SERVICE_PROFILES[idServiceProfileKey];
