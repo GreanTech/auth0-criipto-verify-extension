@@ -12,7 +12,7 @@ export default () => {
     var idServiceProfile = constants.ID_SERVICE_PROFILES[idServiceProfileKey];
     var patch = metaPatch(idServiceProfileKey, idServiceProfile);
     var metadata = Object.assign({}, baseline, patch);
-    console.log('meta endpoint requested');
+    console.log('req.webtaskContext', req.webtaskContext);
     res.status(200).send(metadata);
   });
 
