@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 const getPayload = (response) => { return response.data; }
 
-export function getVerifyTenants() { // = () => dispatch => {
+export function getVerifyTenants() {
     return { 
         type: constants.FETCH_VERIFY_TENANTS,
         payload: {
@@ -33,12 +33,18 @@ export function getVerifyTenants() { // = () => dispatch => {
                             return [];
                         }
                     })
-                    // .then((claimScopes) => {
-                    //     dispatch(verifyTenants(claimScopes))
-                    // })
-                    // .catch((err) => {
-                    //     console.error.bind(err);
-                    // })
         }
     }
 };
+
+export function getVerifyLinks() {
+    return { 
+        type: constants.FETCH_VERIFY_LINKS,
+        payload: {
+            promise: 
+                axios.get(window.config.VERIFY_API_ROOT)
+                .then(getPayload)
+        }
+    }
+  };
+  

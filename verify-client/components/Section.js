@@ -68,9 +68,9 @@ const mapState = ({verifyLinks, verifyTenants, connections}) => ({verifyLinks, v
 function mapStateToProps(state) {
   return {
     user: state.auth.get('user'),
-    verifyLinks: state.verify.verifyLinks,
-    verifyTenants: state.verify.get("records").toJS(),
-    connections: state.connections.get("records").toJS()
+    verifyLinks: state.verifyLinks.get('links').toJS(),
+    verifyTenants: state.verifyTenants.get('tenants').toJS(),
+    connections: state.connections.get('records').toJS()
   };
 }
 export default connect(mapStateToProps)(Section);

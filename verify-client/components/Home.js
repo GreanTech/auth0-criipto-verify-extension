@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 // import Header from './Header';
 import Section from './Section';
 import Footer from './Footer';
-import {getVerifyLinks} from '../redux/reducers/verify'
-import {getVerifyTenants} from '../actions/verify'
+import {getVerifyTenants, getVerifyLinks} from '../actions/verify'
 import {fetchConnections} from '../actions/connection'
 
 class Home extends Component {
