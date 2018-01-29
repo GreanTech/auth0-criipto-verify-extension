@@ -4,7 +4,6 @@ import { routerReducer } from 'react-router-redux';
 
 import { verify } from './verify'
 import { auth } from './auth';
-import { gauss } from './gauss';
 import { connections } from './connections';
 
 function lastAction(state = null, action) {
@@ -15,7 +14,6 @@ const state = {
   routing: routerReducer,
   auth,
   verify,
-  gauss,
   connections,
   lastAction,
   form: formReducer

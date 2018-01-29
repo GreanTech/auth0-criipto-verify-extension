@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Section from './Section';
 import Footer from './Footer';
 import {getVerifyLinks} from '../redux/reducers/verify'
-import {getVerifyTenants} from '../redux/reducers/gauss'
+import {getVerifyTenants} from '../actions/verify'
 import {fetchConnections} from '../actions/connection'
 
 class Home extends Component {

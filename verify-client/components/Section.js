@@ -69,7 +69,7 @@ function mapStateToProps(state) {
   return {
     user: state.auth.get('user'),
     verifyLinks: state.verify.verifyLinks,
-    verifyTenants: state.gauss.verifyTenants,
+    verifyTenants: state.verify.get("records").toJS(),
     connections: state.connections.get("records").toJS()
   };
 }
