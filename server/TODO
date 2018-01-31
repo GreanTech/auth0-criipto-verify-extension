@@ -1,0 +1,50 @@
+1. Check if current Auth0 tenant (should be deducible from `AUTH0_DOMAIN` in wt-secrets) is already Gauss-registered
+    Correlation: 
+        Use entityId format "urn:grn:entityid:organization:verify:auth0:" + AUTH0_DOMAIN (different prefix than Verify Mgmt UI uses)
+    
+    If none exist, use the `easyid:access-request` link in Verify to onboard via HTTP POST with payload
+        { 
+            "entityIdentifier": (see above for format), 
+            "name": org-name (maybe the AUTH0_DOMAIN?), 
+            "contactName": from Verify JWT, 
+            "contactEmail": from Verify JWT
+        }
+    
+        - and reload the Gauss scopedClaims to get at the newly created one
+
+2. Check existence of a Verify tenant for the Gauss organization
+    Correlation:
+        The Gauss org has an .id property. Use the following Verify tenantId format: 
+            var tenantId = "urn:grn:verify:auth0:tenant:" + gaussOrg.id
+        Use Verify's easyid:tenant-domains link template to check for existence. 
+        Template replacement: {tenantId} -> tenantId
+
+    If none exist, use the `easyid:enrollment` link in Verify to enroll via HTTP POST with payload
+        {
+            "tenantId": tenantId,
+            "entityId": gaussOrg.entityIdentifyer,
+            "domainName": domainName
+        }
+
+         - where the domainName is a concatenation of AUTH0_DOMAIN.replace(/\./-/g) and '.criipto.id'.
+
+3. Check existence of a Verify application with correct realm and callback URL. 
+    The realm value is urn:auth0:'Auth0 tenant name', where 'Auth0 tenant name' is the value before the first dot in AUTH0_DOMAIN.
+    The callback URL is https://AUTH0_DOMAIN/login/callback
+    Make sure to include 'auth0' as a value in the 'tags' collection for the app.
+
+4. Check the existence of an Auth0 connection (adfs) per authentication method for the given id-scheme.
+    Payload is something like
+    {
+        Name = 'criipto-verify' + unique, readable, name for auth method |> capAt 35
+        Strategy = "adfs"
+        Options = 
+        {   AdfsServer = 'https://' + domainName + ':443/' + url encoded wauth value + '/FederationMetadata/2007-06/FederationMetadata.xml'
+            DomainAliases = [] 
+        }
+    }
+
+
+
+Misc:
+    Check if we can change the title in Lock on Verify (it says easyID ATM)

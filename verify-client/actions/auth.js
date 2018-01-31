@@ -16,13 +16,21 @@ const webAuth = new auth0.WebAuth({ // eslint-disable-line no-undef
   }
 });
 
+export function renewAuth() {
+  return (dispatch) => {
+    webauth.renewAuth({}, function (err, resp) {
+        return processTokens(dispatch, resp.idToken);
+    });
+  }
+};
+
 export function login(returnUrl) {
   sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
 
   webAuth.authorize({
     responseType: 'id_token',
     redirectUri: `${window.config.BASE_URL}/login`,
-    scope: 'openid email name'
+    scope: 'openid email name scopedUserClaims'
   });
 
   return {

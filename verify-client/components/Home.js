@@ -17,7 +17,7 @@ class Home extends Component {
     super(props);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.getVerifyLinks();
     this.props.getVerifyTenants();
     this.props.fetchConnections();

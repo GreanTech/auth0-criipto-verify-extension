@@ -4,21 +4,31 @@ import VerifyLink from './VerifyLink';
 import VerifyTenant from './VerifyTenant';
 import Connection from './Connection';
 import { toJS } from 'immutable';
+import {createVerifyTenant} from '../actions/verify';
 
 class Section extends Component {
   static propTypes = {
-    user: PropTypes.object
+    user: PropTypes.object,
+    tenantsLoading: PropTypes.bool.isRequired,
+    createVerifyTenant : PropTypes.func.isRequired,
+    existingTenant: PropTypes.object.isRequired,
+    domainLoading: PropTypes.bool.isRequired,
+    existingDomain: PropTypes.object,
   };
 
   constructor(props) {
-    super(props)
+    super(props);
   }
 
   render() {
+
     return (
       <section id="one" className="wrapper style2 special flow">
         <header className="major">
           <h2>Hi there, {this.props.user.get("name")} (email: {this.props.user.get("email")})</h2>
+        </header>
+        <header className="major">
+          <h3><VerifyTenant/></h3>
         </header>
         <header className="major">
           <h2>Existing connections</h2>
@@ -44,19 +54,6 @@ class Section extends Component {
             )
           })
         }
-        <header className="major">
-          <h2>Existing Verify Tenants (from Gauss)</h2>
-        </header>
-        {
-          this.props.verifyTenants && this.props.verifyTenants.map((verifyTenant) => {
-            var org = verifyTenant.organization;
-            if (!org)
-              return <div></div>
-            return (
-              <VerifyTenant key={org.entityIdentifier} Obj={org} isComplete={false} Name={org.name}/>
-            )
-          })
-        }
       </section>
     );
   }
@@ -64,13 +61,17 @@ class Section extends Component {
 }
 ;
 
-const mapState = ({verifyLinks, verifyTenants, connections}) => ({verifyLinks, verifyTenants, connections});
 function mapStateToProps(state) {
   return {
     user: state.auth.get('user'),
     verifyLinks: state.verifyLinks.get('links').toJS(),
     verifyTenants: state.verifyTenants.get('tenants').toJS(),
-    connections: state.connections.get('records').toJS()
+    connections: state.connections.get('records').toJS(),
+    tenantsLoading: state.verifyTenants.get('loading'),
+    existingTenant: state.verifyTenants.get('existingTenant').toJS(),
+    domainLoading: state.verifyDomains.get('loading')
   };
 }
-export default connect(mapStateToProps)(Section);
+
+const mapDispatch = {createVerifyTenant};
+export default connect(mapStateToProps, mapDispatch)(Section);
