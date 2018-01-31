@@ -18,7 +18,7 @@ const webAuth = new auth0.WebAuth({ // eslint-disable-line no-undef
 
 export function renewAuth() {
   return (dispatch) => {
-    webauth.renewAuth({}, function (err, resp) {
+    webAuth.renewAuth({}, function (err, resp) {
         return processTokens(dispatch, resp.idToken);
     });
   }
