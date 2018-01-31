@@ -4,6 +4,7 @@ import _ from 'lodash';
 import renewAuth from './auth';
 import { toJS } from 'immutable';
 import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyDnsName } from '../dsl'
+import { verifyLinks } from "../redux/reducers/verify";
 
 const getScopedClaims = (scopedClaimsLink) => {
     // User may already have onboarded before
@@ -17,7 +18,7 @@ const getScopedClaims = (scopedClaimsLink) => {
         });
 }
 
-export function getVerifyTenants() {
+export function fetchVerifyTenants() {
     return (dispatch) => { 
         dispatch({
             type: constants.FETCH_VERIFY_TENANTS,
@@ -67,31 +68,58 @@ export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
                                 }
                             }),
                             dispatch(renewAuth()),
-                            dispatch(getVerifyTenants())
+                            dispatch(fetchVerifyTenants())
                         ])
             }
         })
     }
 };
 
-export function fetchVerifyDomain(verifyTenant, verifyLinkTemplates) {
+function tenantDomainsResource(verifyTenant, verifyLinkTemplates) {
+    var verifyDomainsResourceTemplate = 
+        _.find(verifyLinkTemplates, {'rel' : 'easyid:tenant-domains'});
+    var verifyDomainsResource = 
+        withTenantId(verifyDomainsResourceTemplate.href, verifyTenant);
+    return verifyDomainsResource;
+};
+
+export function fetchVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks) {
     return (dispatch) => {
-        var verifyDomainResourceTemplate = 
-            _.find(verifyLinkTemplates, {'rel' : 'easyid:tenant-domains'});
         var verifyDomainResource = 
-            withTenantId(verifyDomainResourceTemplate.href, verifyTenant);
+            tenantDomainsResource(verifyTenant, verifyLinkTemplates);
         dispatch({
             type: constants.FETCH_VERIFY_DOMAINS,
             payload: {
                 promise:
                     axios.get(verifyDomainResource, jsonResp)
                         .then(getPayload)
+                        .then(tenantDomains => {
+                            if (!tenantDomains.domains || tenantDomains.domains.length === 0)
+                            {
+                                dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks));
+                            }
+                            return tenantDomains;
+                        })
+                        .catch(error => {
+                            if (!error || !error.response || error.response.status != 400) {
+                                throw error;
+                            }
+
+                            var message = (error.response.data || {}).message || '';
+                            if(message.indexOf(verifyTenantId(verifyTenant)) > 0
+                                && message.indexOf('is not registered') > 0 ) {
+                                dispatch(enrollVerifyDomain(verifyTenant, verifyLinks));
+                            }
+                            else {
+                                throw error;
+                            }
+                        })
             }
         })
     }
 };
 
-export function createVerifyDomain(verifyTenant, verifyLinks) {
+export function enrollVerifyDomain(verifyTenant, verifyLinks) {
     var enrollLink = _.find(verifyLinks, { 'rel': 'easyid:enrollment' });
     var cfg = window.config;
     var payload = {
@@ -101,7 +129,7 @@ export function createVerifyDomain(verifyTenant, verifyLinks) {
     };
     return (dispatch) => {
         dispatch({
-            type: constants.CREATE_VERIFY_DOMAIN,
+            type: constants.ENROLL_VERIFY_DOMAIN,
             payload: {
                 promise: 
                     axios.post(
@@ -110,6 +138,36 @@ export function createVerifyDomain(verifyTenant, verifyLinks) {
                         {
                             headers: {
                                 'Content-Type' : contentType('enrollment')
+                            }
+                        }
+                    ).then(getPayload)
+                    .then(p => {
+                        dispatch(fetchVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks));
+                        return p;                        
+                    })
+            }
+        })
+    }
+};
+
+export function createVerifyDomain(verifyTenant, verifyLinkTemplates) {
+    var verifyDomainsResource = 
+        tenantDomainsResource(verifyTenant, verifyLinkTemplates);
+    var payload = {
+        name: verifyDnsName(),
+        production: false
+    };
+    return (dispatch) => {
+        dispatch({
+            type: constants.CREATE_VERIFY_DOMAIN,
+            payload: {
+                promise: 
+                    axios.post(
+                        verifyDomainsResource,
+                        payload,
+                        {
+                            headers: {
+                                'Content-Type' : contentType('domain')
                             }
                         }
                     ).then(getPayload)
@@ -131,7 +189,7 @@ export function fetchVerifyApplication(verifyDomain) {
     }
 };
 
-export function getVerifyLinks() {
+export function fetchVerifyLinks() {
     return { 
         type: constants.FETCH_VERIFY_LINKS,
         payload: {

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { fetchVerifyDomain, createVerifyDomain } from '../actions/verify';
+import { fetchVerifyDomain, enrollVerifyDomain } from '../actions/verify';
 
 class VerifyDomain extends Component {
     static propTypes = {
@@ -9,24 +9,19 @@ class VerifyDomain extends Component {
         verifyLinks: PropTypes.array.isRequired,
         verifyLinkTemplates: PropTypes.array.isRequired,        
         fetchVerifyDomain: PropTypes.func.isRequired,
-        createVerifyDomain: PropTypes.func.isRequired,
+        enrollVerifyDomain: PropTypes.func.isRequired,
         existingDomain: PropTypes.object,
     }
 
     constructor(props) {
         super(props);
-        this.createDomain = this.createDomain.bind(this);
     }
 
     componentDidMount() {
-        this.props.fetchVerifyDomain(this.props.existingTenant, this.props.verifyLinkTemplates);
-    }
-
-    createDomain = () => {
-        this.props.createVerifyDomain(
-            this.props.existingTenant,
-            this.props.verifyLinks
-        );
+        this.props.fetchVerifyDomain(
+            this.props.existingTenant, 
+            this.props.verifyLinkTemplates,
+            this.props.verifyLinks);
     }
 
     render() {
@@ -59,5 +54,5 @@ function mapStateToProps(state) {
     };
 };
 
-const mapDispatch = { fetchVerifyDomain, createVerifyDomain }
+const mapDispatch = { fetchVerifyDomain, enrollVerifyDomain }
 export default connect(mapStateToProps, mapDispatch)(VerifyDomain);

@@ -32,10 +32,10 @@ export const FETCH_CONNECTIONS_FULFILLED = 'FETCH_CONNECTIONS_FULFILLED';
  */
 
 export const GAUSS_ENTITY_ID = 
-    'urn:grn:entityid:organization:verify:auth0:1:'
+    'urn:grn:entityid:organization:verify:auth0:'
         + window.config.AUTH0_DOMAIN;
 
-export const VERIFY_TENANT_ID_PREFIX = 'urn:grn:verify:auth0:tenant:';
+export const VERIFY_TENANT_ID_PREFIX = 'urn:grn:easyid:tenant:';
 
 // Fetch tenants
 export const FETCH_VERIFY_TENANTS = "FETCH_VERIFY_TENANTS";
@@ -60,6 +60,12 @@ export const FETCH_VERIFY_DOMAINS = "FETCH_VERIFY_DOMAINS";
 export const FETCH_VERIFY_DOMAINS_PENDING = "FETCH_VERIFY_DOMAINS_PENDING";
 export const FETCH_VERIFY_DOMAINS_REJECTED = "FETCH_VERIFY_DOMAINS_REJECTED";
 export const FETCH_VERIFY_DOMAINS_FULFILLED = "FETCH_VERIFY_DOMAINS_FULFILLED";
+
+// Enroll tenant with domain
+export const ENROLL_VERIFY_DOMAIN = "ENROLL_VERIFY_DOMAIN";
+export const ENROLL_VERIFY_DOMAIN_PENDING = "ENROLL_VERIFY_DOMAIN_PENDING";
+export const ENROLL_VERIFY_DOMAIN_REJECTED = "ENROLL_VERIFY_DOMAIN_REJECTED";
+export const ENROLL_VERIFY_DOMAIN_FULFILLED = "ENROLL_VERIFY_DOMAIN_FULFILLED";
 
 // Create domain
 export const CREATE_VERIFY_DOMAIN = "CREATE_VERIFY_DOMAIN";

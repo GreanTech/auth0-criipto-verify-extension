@@ -65,7 +65,23 @@ export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { 
       error: null,
       existingDomain: existingDomain
     })},
-  [constants.CREATE_VERIFY_DOMAIN_PENDING]: (state) =>
+  [constants.ENROLL_VERIFY_DOMAIN_PENDING]: (state) =>
+    state.merge({
+      loading: true,
+      error: null
+    }),
+  [constants.ENROLL_VERIFY_DOMAIN_REJECTED]: (state, action) =>
+    state.merge({
+      loading: false,
+      error: `An error occured while enrolling a Criipto Verify domain: ${action.errorMessage}`
+    }),
+  [constants.ENROLL_VERIFY_DOMAIN_FULFILLED]: (state, action) =>
+    state.merge({
+      loading: false,
+      error: null,
+      existingDomain: action.payload
+    }),
+    [constants.CREATE_VERIFY_DOMAIN_PENDING]: (state) =>
     state.merge({
       loading: true,
       error: null
@@ -73,13 +89,12 @@ export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { 
   [constants.CREATE_VERIFY_DOMAIN_REJECTED]: (state, action) =>
     state.merge({
       loading: false,
-      error: `An error occured while loading the Criipto Verify domain: ${action.errorMessage}`
+      error: `An error occured while creating a Criipto Verify domain: ${action.errorMessage}`
     }),
   [constants.CREATE_VERIFY_DOMAIN_FULFILLED]: (state, action) =>
     state.merge({
       loading: false,
-      error: null,
-      existingDomain: action.payload      
+      error: null
     })
 });
 
