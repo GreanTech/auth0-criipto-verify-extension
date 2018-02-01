@@ -1,9 +1,9 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
 export default function RequireAuthentication(InnerComponent) {
-  class RequireAuthenticationContainer extends React.Component {
+  class RequireAuthenticationContainer extends Component {
     static propTypes = {
       push: PropTypes.func.isRequired,
       auth: PropTypes.object.isRequired,
@@ -38,4 +38,34 @@ export default function RequireAuthentication(InnerComponent) {
   }
 
   return connect((state) => ({ auth: state.auth.toJS() }), { push })(RequireAuthenticationContainer);
+}
+
+export function RequireDashboardAdmin(InnerComponent) {
+  class RequireDashboardAdminContainer extends Component {
+    
+    componentWillMount() {
+      this.requireDashboardAdmin();
+    }
+
+    componentWillReceiveProps() {
+      this.requireDashboardAdmin();
+    }
+
+    requireDashboardAdmin() {
+      const token = sessionStorage.getItem('delegated-admin:apiToken');
+      if (!token) {
+        window.location.pathname = '/admins/login';
+      }
+    }
+
+    render() {
+      if (sessionStorage.getItem('delegated-admin:apiToken')) {
+        return <InnerComponent {...this.props} />;
+      }
+
+      return <div></div>;
+    }
+  }
+
+  return connect((state) => ({ auth: state.auth.toJS() }), { push })(RequireDashboardAdminContainer);
 }
