@@ -135,17 +135,17 @@ let initialStateApplications = {
 };
 
 export const verifyApplications = createReducer(fromJS(initialStateApplications), { // eslint-disable-line import/prefer-default-export
-  [constants.FETCH_VERIFY_APPLICATIONS_PENDING]: (state) =>
+  [constants.MERGE_VERIFY_APPLICATIONS_PENDING]: (state) =>
   state.merge({
     loading: true,
     error: null
   }),
-  [constants.FETCH_VERIFY_APPLICATIONS_REJECTED]: (state, action) =>
+  [constants.MERGE_VERIFY_APPLICATIONS_REJECTED]: (state, action) =>
     state.merge({
       loading: false,
       error: `An error occured while loading the Criipto Verify applications: ${action.errorMessage}`
   }),
-  [constants.FETCH_VERIFY_APPLICATIONS_FULFILLED]: (state, action) => {
+  [constants.MERGE_VERIFY_APPLICATIONS_FULFILLED]: (state, action) => {
     var expected = verifyRealm();
     var filtered = _.filter(action.payload.applications || [], app =>
       app.realm && app.realm === expected);

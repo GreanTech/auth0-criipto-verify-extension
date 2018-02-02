@@ -200,11 +200,11 @@ export function createVerifyDomain(verifyTenant, verifyLinkTemplates) {
     }
 };
 
-export function fetchVerifyApplications(verifyDomain) {
+export function mergeVerifyApplications(verifyDomain) {
     var applicationsLink = _.find(verifyDomain.links, { 'rel': 'easyid:applications' });
     return (dispatch) => {
         dispatch({
-            type: constants.FETCH_VERIFY_APPLICATIONS,
+            type: constants.MERGE_VERIFY_APPLICATIONS,
             payload: {
                 promise: 
                     axios.get(applicationsLink.href, jsonResp)

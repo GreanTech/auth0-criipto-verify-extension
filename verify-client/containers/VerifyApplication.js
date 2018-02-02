@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { fetchVerifyApplications } from '../actions/verify';
+import { mergeVerifyApplications } from '../actions/verify';
 import _ from 'lodash';
 import { tryToJS } from '../dsl';
 import VerifyApplication from '../components/VerifyApplication';
@@ -9,7 +9,7 @@ class VerifyApplicationContainer extends Component {
     static propTypes = {
         applicationLoading: PropTypes.bool.isRequired,
         existingDomain: PropTypes.object.isRequired,
-        fetchVerifyApplications: PropTypes.func.isRequired,
+        mergeVerifyApplications: PropTypes.func.isRequired,
         existingApplication: PropTypes.object
     }
 
@@ -18,7 +18,7 @@ class VerifyApplicationContainer extends Component {
     }
 
     componentDidMount() {
-        this.props.fetchVerifyApplications(this.props.existingDomain);
+        this.props.mergeVerifyApplications(this.props.existingDomain);
     }
 
     render() {
@@ -40,6 +40,6 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = { fetchVerifyApplications };
+const mapDispatchToProps = { mergeVerifyApplications };
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyApplicationContainer);
