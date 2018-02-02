@@ -13,23 +13,28 @@ export default (storage) => {
   hooks.use('/on-install', hookValidator('/.extensions/on-install'));
 
   hooks.post('/on-install', (req, res) => {
-    logger.info("Install hook running. ", (req.webtaskContext ? req.webtaskContext : req));
+    logger.info("Install hook running. ");
     storage.read().then(storedData => { 
         var data = storedData || {};             
         var gaussEntityId = data.gaussEntityId;
         if (gaussEntityId) {
             logger.info('Found existing Gauss entityIdentifier', gaussEntityId);
-            return storedData;
         }
         else 
         {
             var id = uuid.v4();
             data.gaussEntityId = 'urn:grn:entityid:organization:verify:auth0:' + id;
             logger.info('Generated new Gauss entityIdentifier', data.gaussEntityId);
-            return storage.write(data); 
         }
+
+        res.sendStatus(204);
     })
-});
+    .catch((err) => {
+        logger.debug('Error deploying resources for the Criipto Verify extension.');
+        logger.error(err);
+        res.sendStatus(400);
+      });
+    });
 
   return hooks;
 };
