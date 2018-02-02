@@ -25,7 +25,23 @@ export const tryToJS = (candidate) => {
     return candidate ? candidate.toJS() : null;
 }
 
+const auth0TenantName = () => {
+    return _.first(window.config.AUTH0_DOMAIN.split('.'));
+};
+
 export const verifyRealm = () => {
-    var auth0TenantName = _.first(window.config.AUTH0_DOMAIN.split('.'));
-    return `urn:auth0:${auth0TenantName}`;
+    return `urn:auth0:${auth0TenantName()}`;
+};
+
+export const verifyApplication = () => {
+    var cfg = window.config;
+    return {
+        name: auth0TenantName(),
+        realm: verifyRealm(),
+        sessionLifetime: '00:20:00',
+        returnUrls: [`https://${cfg.AUTH0_DOMAIN}/login/callback/`],
+        authMethods: cfg.CRIIPTO_VERIFY_AUTHMETHODS,
+        frameOrigins: [cfg.AUTH0_DOMAIN],
+        tags: ['auth0']
+    }
 }

@@ -4,7 +4,7 @@ const VerifyApplication = ({existingApplication}) => (
     <section>
         <span>
             OK, existing Criipto Verify application found:
-            {this.props.existingApplication.name}
+            {existingApplication.name}
         </span>
     </section>
 );

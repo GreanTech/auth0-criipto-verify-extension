@@ -65,6 +65,7 @@ export default () => {
       CRIIPTO_VERIFY_TLD: config('CRIIPTO_VERIFY_TLD'),
       CRIIPTO_VERIFY_AUTHMETHOD_NAME: idServiceProfile.displayName,
       CRIIPTO_VERIFY_AUTHMETHOD_LOGO: idServiceProfile.logo,
+      CRIIPTO_VERIFY_AUTHMETHODS: idServiceProfile.acrValues
     };
 
     // Render from CDN.

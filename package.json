@@ -128,6 +128,7 @@
     "string.prototype.endswith": "^0.2.0",
     "superagent": "1.2.0",
     "uuid": "2.0.1",
+    "webpack": "1.13.1",
     "webtask-tools": "^3.1.0",
     "winston": "^2.2.0"
   },
@@ -178,7 +179,6 @@
     "style-loader": "0.18.1",
     "supertest": "^2.0.1",
     "url-loader": "0.5.8",
-    "webpack": "^1.13.1",
     "webpack-dev-middleware": "1.10.2",
     "webpack-dev-server": "^1.16.2",
     "webpack-hot-middleware": "2.18.0",

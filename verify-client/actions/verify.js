@@ -3,7 +3,7 @@ import * as constants from '../constants';
 import _ from 'lodash'; 
 import renewAuth from './auth';
 import { toJS } from 'immutable';
-import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyDnsName } from '../dsl'
+import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyDnsName, verifyRealm, verifyApplication} from '../dsl'
 
 const getScopedClaims = (scopedClaimsLink) => {
     // User may already have onboarded before
@@ -204,10 +204,26 @@ export function fetchVerifyApplications(verifyDomain) {
     var applicationsLink = _.find(verifyDomain.links, { 'rel': 'easyid:applications' });
     return (dispatch) => {
         dispatch({
-            type: constants.FETCH_VERIFY_APPLICATION,
+            type: constants.FETCH_VERIFY_APPLICATIONS,
             payload: {
                 promise: 
                     axios.get(applicationsLink.href, jsonResp)
+                        .then(getPayload)
+                        .then(r => {
+                            if (_.find(r.applications, { realm: verifyRealm() })) {
+                                return r;
+                            } else {
+                                var payload = verifyApplication();
+                                return axios.post(
+                                    applicationsLink.href,
+                                    payload,
+                                    {
+                                        headers: {
+                                            'Content-Type': contentType('application')
+                                        }    
+                                }).then(getPayload)
+                            }
+                        })
             }
         })
     }
