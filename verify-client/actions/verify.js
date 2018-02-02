@@ -150,7 +150,7 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
                             {
                                 dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
                             }
-                            return { existingDomain: filterDomainsByDnsName(tenantDomains, dnsName) };
+                            return { existingDomain: filterDomainsByDnsName(tenantDomains.domains, dnsName) };
                         })
                         .catch(error => {
                             if (!error || !error.response || error.response.status != 400) {
