@@ -52,14 +52,16 @@ export function RequireDashboardAdmin(InnerComponent) {
     }
 
     requireDashboardAdmin() {
-      const token = sessionStorage.getItem('delegated-admin:apiToken');
-      if (!token) {
-        window.location.pathname = '/admins/login';
+      if (window.location.hostname !== 'localhost') {
+        const token = sessionStorage.getItem('delegated-admin:apiToken');
+        if (!token) {
+          window.location.pathname = '/admins/login';
+        }
       }
     }
 
     render() {
-      if (sessionStorage.getItem('delegated-admin:apiToken')) {
+      if (window.location.hostname === 'localhost' || sessionStorage.getItem('delegated-admin:apiToken')) {
         return <InnerComponent {...this.props} />;
       }
 

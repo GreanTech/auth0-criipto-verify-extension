@@ -44,17 +44,17 @@ let initialStateVerifyDomains = {
 };
 
 export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { // eslint-disable-line import/prefer-default-export
-  [constants.FETCH_VERIFY_DOMAINS_PENDING]: (state) =>
+  [constants.MERGE_VERIFY_DOMAINS_PENDING]: (state) =>
     state.merge({
       loading: true,
       error: null
     }),
-  [constants.FETCH_VERIFY_DOMAINS_REJECTED]: (state, action) =>
+  [constants.MERGE_VERIFY_DOMAINS_REJECTED]: (state, action) =>
     state.merge({
       loading: false,
       error: `An error occured while loading the Criipto Verify domain: ${action.errorMessage}`
     }),
-  [constants.FETCH_VERIFY_DOMAINS_FULFILLED]: (state, action) => {
+  [constants.MERGE_VERIFY_DOMAINS_FULFILLED]: (state, action) => {
     var expected = verifyDnsName();
     var filtered = _.filter(action.payload.domains || [], domain =>
       domain.name && domain.name === expected);

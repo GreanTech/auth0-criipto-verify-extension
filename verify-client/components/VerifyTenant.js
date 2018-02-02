@@ -24,7 +24,6 @@ class VerifyTenant extends Component {
       this.props.verifyLinkTemplates);
   }
 
-  
   render() {
     if (this.props.tenantsLoading) {
       return (<span>Checking for existing Criipto Verify tenants</span>);

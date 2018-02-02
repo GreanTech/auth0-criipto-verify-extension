@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { fetchVerifyDomain, enrollVerifyDomain } from '../actions/verify';
+import { mergeVerifyDomain } from '../actions/verify';
 import _ from 'lodash';
 import { tryToJS } from '../dsl';
 import VerifyApplication from '../containers/VerifyApplication';
@@ -11,8 +11,7 @@ class VerifyDomain extends Component {
         existingTenant: PropTypes.object.isRequired,
         verifyLinks: PropTypes.array.isRequired,
         verifyLinkTemplates: PropTypes.array.isRequired,
-        fetchVerifyDomain: PropTypes.func.isRequired,
-        enrollVerifyDomain: PropTypes.func.isRequired,
+        mergeVerifyDomain: PropTypes.func.isRequired,
         existingDomain: PropTypes.object,
     }
 
@@ -23,7 +22,7 @@ class VerifyDomain extends Component {
     componentDidMount() {
         if (!this.props.existingDomain
             && _.find(this.props.verifyLinkTemplates, { 'rel': 'easyid:tenant-domains' })) {
-            this.props.fetchVerifyDomain(
+            this.props.mergeVerifyDomain(
                 this.props.existingTenant,
                 this.props.verifyLinkTemplates,
                 this.props.verifyLinks);
@@ -59,5 +58,5 @@ function mapStateToProps(state) {
     };
 };
 
-const mapDispatch = { fetchVerifyDomain, enrollVerifyDomain }
+const mapDispatch = { mergeVerifyDomain }
 export default connect(mapStateToProps, mapDispatch)(VerifyDomain);

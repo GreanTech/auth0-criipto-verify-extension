@@ -107,12 +107,12 @@ function tenantDomainsResource(verifyTenant, verifyLinkTemplates) {
     return verifyDomainsResource;
 };
 
-export function fetchVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks) {
+export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks) {
     return (dispatch) => {
         var verifyDomainResource = 
             tenantDomainsResource(verifyTenant, verifyLinkTemplates);
         dispatch({
-            type: constants.FETCH_VERIFY_DOMAINS,
+            type: constants.MERGE_VERIFY_DOMAINS,
             payload: {
                 promise:
                     axios.get(verifyDomainResource, jsonResp)
@@ -166,7 +166,7 @@ export function enrollVerifyDomain(verifyTenant, verifyLinks) {
                         }
                     ).then(getPayload)
                     .then(p => {
-                        dispatch(fetchVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks));
+                        dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks));
                         return p;                        
                     })
             }
