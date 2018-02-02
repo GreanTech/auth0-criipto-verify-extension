@@ -39,4 +39,10 @@ export const verifyApplication = () => {
         frameOrigins: [cfg.AUTH0_DOMAIN],
         tags: ['auth0']
     }
-}
+};
+
+// Just for suggestions, may be taken already
+export const defaultVerifyDnsName = () => {
+    var cfg = window.config;
+    return `${cfg.AUTH0_DOMAIN.replace(/\./g, '-')}.${cfg.CRIIPTO_VERIFY_TLD}`;
+};

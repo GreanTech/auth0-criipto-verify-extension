@@ -37,6 +37,31 @@ export const verifyTenants = createReducer(fromJS(initialStateTenants), { // esl
     })}
 });
 
+let initialStateDefaultDomainAvailable = {
+  loading: false,
+  error: null,
+  domainAvailable: false
+};
+
+export const checkDomainAvailable = createReducer(fromJS(initialStateDefaultDomainAvailable), { // eslint-disable-line import/prefer-default-export
+  [constants.CHECK_VERIFY_DOMAIN_AVAILABLE_PENDING]: (state) =>
+    state.merge({
+      loading: true,
+      error: null
+    }),
+  [constants.CHECK_VERIFY_DOMAIN_AVAILABLE_REJECTED]: (state, action) =>
+    state.merge({
+      loading: false,
+      error: `An error occured while checking if a Criipto Verify DNS domain is available: ${action.errorMessage}`
+    }),
+  [constants.CHECK_VERIFY_DOMAIN_AVAILABLE_FULFILLED]: (state, action) => {
+    return state.merge({
+      loading: false,
+      error: null,
+      domainAvailable: action.payload.available
+    })}
+});
+
 let initialStateVerifyDomains = {
   loading: false,
   error: null,

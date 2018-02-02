@@ -3,7 +3,7 @@ import * as constants from '../constants';
 import _ from 'lodash'; 
 import renewAuth from './auth';
 import { toJS } from 'immutable';
-import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyRealm, verifyApplication} from '../dsl'
+import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyRealm, verifyApplication, defaultVerifyDnsName} from '../dsl'
 
 const getScopedClaims = (scopedClaimsLink) => {
     // User may already have onboarded before
@@ -63,11 +63,32 @@ export function fetchCore() {
                 promise: Promise.all([
                     dispatch(fetchVerifyTenants()),
                     dispatch(fetchVerifyLinks())
-                ])
+                ]).then(() => {
+                    dispatch(checkDomainAvailable(defaultVerifyDnsName()))
+                })
             }
         })
     }
 }
+
+export function checkDomainAvailable(dnsName) {
+    return (dispatch, getState) => {
+        var linkTemplates = getState().verifyLinks.get('linkTemplates').toJS();
+        var dnsAvailableLink = _.find(linkTemplates, {'rel' : 'easyid:dns-available'});
+        var dnsAvailableResource = dnsAvailableLink.href.replace(/{domain}/, dnsName);
+        dispatch({
+            type: constants.CHECK_VERIFY_DOMAIN_AVAILABLE,
+            payload: {
+                promise: 
+                    axios.get(dnsAvailableResource)
+                        .then(getPayload)
+                        .then(r => {
+                            return r;
+                        })
+            }
+        });
+    }
+};
 
 export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
     var accessRequestLink = _.find(verifyLinks, { 'rel': 'easyid:access-request'});
