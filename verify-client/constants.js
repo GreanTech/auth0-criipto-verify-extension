@@ -31,9 +31,7 @@ export const FETCH_CONNECTIONS_FULFILLED = 'FETCH_CONNECTIONS_FULFILLED';
  * Criipto Verify 
  */
 
-export const GAUSS_ENTITY_ID = 
-    'urn:grn:entityid:organization:verify:auth0:'
-        + window.config.AUTH0_DOMAIN;
+export const GAUSS_ENTITY_ID = window.config.GAUSS_ENTITY_ID;
 
 export const VERIFY_TENANT_ID_PREFIX = 'urn:grn:easyid:tenant:';
 

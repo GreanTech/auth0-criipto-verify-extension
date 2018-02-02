@@ -8,7 +8,7 @@ import metadata from '../../webtask.json';
 var constants = require('../constants');
 var ext = require('../lib/extension');
 
-export default () => {
+export default (storage) => {
   const template = `
     <!DOCTYPE html>
     <html lang="en">
@@ -45,62 +45,65 @@ export default () => {
       return next();
     }
 
-    var idServiceProfileKey = ext.name(req);
-    const idServiceProfile = constants.ID_SERVICE_PROFILES[idServiceProfileKey];
+    return storage.read().then(storedData => {
+      var idServiceProfileKey = ext.name(req);
+      const idServiceProfile = constants.ID_SERVICE_PROFILES[idServiceProfileKey];
 
-    var basePath = (urlHelpers.getBasePath(req) || '').replace(/\/$/, '');
-    const settings = {
-      CRIIPTO_VERIFY_AUTH0_DOMAIN: config('CRIIPTO_VERIFY_AUTH0_DOMAIN'),
-      CRIIPTO_VERIFY_CLIENT_ID: config('CRIIPTO_VERIFY_CLIENT_ID'),
-      CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER: config('CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER'),
-      EXTEND_URL: config('EXTEND_URL'),
-      BASE_URL: config('GALLERY_WT_URL') || urlHelpers.getBaseUrl(req),
-      BASE_PATH: basePath,
-      TITLE: config('TITLE'),
-      FEDERATED_LOGOUT: config('FEDERATED_LOGOUT') === 'true',
-      VERIFY_API_ROOT: 'https://' + config("CRIIPTO_VERIFY_DOMAIN"),
-      GAUSS_API_ROOT: 'https://' + config("GAUSS_DOMAIN"),
-      VERIFY_GAUSS_APP_ID : config('VERIFY_GAUSS_APP_ID'),
-      AUTH0_DOMAIN: config("AUTH0_DOMAIN"),
-      CRIIPTO_VERIFY_TLD: config('CRIIPTO_VERIFY_TLD'),
-      CRIIPTO_VERIFY_AUTHMETHOD_NAME: idServiceProfile.displayName,
-      CRIIPTO_VERIFY_AUTHMETHOD_LOGO: idServiceProfile.logo,
-      CRIIPTO_VERIFY_AUTHMETHODS: idServiceProfile.acrValues
-    };
-
-    // Render from CDN.
-    const clientVersion = process.env.CLIENT_VERSION;
-    if (clientVersion) {
-      const cdnPath = config('CDN_PATH') || 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/dist';
-      return res.send(ejs.render(template, {
-        config: settings,
-        assets: {
-          customCss: config('CUSTOM_CSS'),
-          version: clientVersion,
-          cdnPath: cdnPath
-        }
-      }));
-    }
-
-    // Render locally.
-    return fs.readFile(path.join(__dirname, '../../dist/manifest.json'), 'utf8', (err, manifest) => {
-      const locals = {
-        config: settings,
-        assets: {
-          customCss: config('CUSTOM_CSS'),
-          app: 'bundle.js'
-        }
+      var basePath = (urlHelpers.getBasePath(req) || '').replace(/\/$/, '');
+      const settings = {
+        CRIIPTO_VERIFY_AUTH0_DOMAIN: config('CRIIPTO_VERIFY_AUTH0_DOMAIN'),
+        CRIIPTO_VERIFY_CLIENT_ID: config('CRIIPTO_VERIFY_CLIENT_ID'),
+        CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER: config('CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER'),
+        EXTEND_URL: config('EXTEND_URL'),
+        BASE_URL: config('GALLERY_WT_URL') || urlHelpers.getBaseUrl(req),
+        BASE_PATH: basePath,
+        TITLE: config('TITLE'),
+        FEDERATED_LOGOUT: config('FEDERATED_LOGOUT') === 'true',
+        VERIFY_API_ROOT: 'https://' + config("CRIIPTO_VERIFY_DOMAIN"),
+        GAUSS_API_ROOT: 'https://' + config("GAUSS_DOMAIN"),
+        VERIFY_GAUSS_APP_ID : config('VERIFY_GAUSS_APP_ID'),
+        AUTH0_DOMAIN: config("AUTH0_DOMAIN"),
+        CRIIPTO_VERIFY_TLD: config('CRIIPTO_VERIFY_TLD'),
+        CRIIPTO_VERIFY_AUTHMETHOD_NAME: idServiceProfile.displayName,
+        CRIIPTO_VERIFY_AUTHMETHOD_LOGO: idServiceProfile.logo,
+        CRIIPTO_VERIFY_AUTHMETHODS: idServiceProfile.acrValues,
+        GAUSS_ENTITY_ID: storedData.gaussEntityId
       };
 
-      if (!err && manifest) {
-        locals.assets = {
-          customCss: config('CUSTOM_CSS'),
-          ...JSON.parse(manifest)
-        };
+      // Render from CDN.
+      const clientVersion = process.env.CLIENT_VERSION;
+      if (clientVersion) {
+        const cdnPath = config('CDN_PATH') || 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/dist';
+        return res.send(ejs.render(template, {
+          config: settings,
+          assets: {
+            customCss: config('CUSTOM_CSS'),
+            version: clientVersion,
+            cdnPath: cdnPath
+          }
+        }));
       }
 
-      // Render the HTML page.
-      res.send(ejs.render(template, locals));
+      // Render locally.
+      return fs.readFile(path.join(__dirname, '../../dist/manifest.json'), 'utf8', (err, manifest) => {
+        const locals = {
+          config: settings,
+          assets: {
+            customCss: config('CUSTOM_CSS'),
+            app: 'bundle.js'
+          }
+        };
+
+        if (!err && manifest) {
+          locals.assets = {
+            customCss: config('CUSTOM_CSS'),
+            ...JSON.parse(manifest)
+          };
+        }
+
+        // Render the HTML page.
+        res.send(ejs.render(template, locals));
+      });
     });
-  };
+  }
 };

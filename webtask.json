@@ -20,6 +20,7 @@
   ],
   "auth0": {
     "createClient": true,
-    "scopes": "read:connections create:connections"
+    "scopes": "read:connections create:connections",
+    "onInstallPath": "/.extensions/on-install"
   }
 }

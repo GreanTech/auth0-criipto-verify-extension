@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import * as tools from 'auth0-extension-tools';
 import { middlewares, routes } from 'auth0-extension-express-tools';
 
+import hooks from './routes/hooks';
 import api from './routes/api';
 import meta from './routes/meta';
 import htmlRoute from './routes/html';
@@ -49,9 +50,10 @@ module.exports = (cfg, storageProvider) => {
   app.use('/api', api(storage));
   app.use('/app', Express.static(path.join(__dirname, '../dist')));
   app.use('/meta', meta());
+  app.use('/.extensions', hooks(storage));
   
   // Fallback to rendering HTML.
-  app.get('*', htmlRoute());
+  app.get('*', htmlRoute(storage));
 
   // Generic error handler.
   app.use(middlewares.errorHandler(logger.error));
