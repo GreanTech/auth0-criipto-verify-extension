@@ -19,15 +19,17 @@ export default (storage) => {
         var gaussEntityId = data.gaussEntityId;
         if (gaussEntityId) {
             logger.info('Found existing Gauss entityIdentifier', gaussEntityId);
+            res.sendStatus(204);
         }
         else 
         {
             var id = uuid.v4();
             data.gaussEntityId = 'urn:grn:entityid:organization:verify:auth0:' + id;
             logger.info('Generated new Gauss entityIdentifier', data.gaussEntityId);
+            storage.write(data).then(() => {
+                res.sendStatus(204);
+            });
         }
-
-        res.sendStatus(204);
     })
     .catch((err) => {
         logger.debug('Error deploying resources for the Criipto Verify extension.');
