@@ -16,11 +16,6 @@ export const withTenantId = (templateHref, verifyTenant) => {
     return templateHref.replace(/{tenantId}/, window.btoa(verifyTenantId(verifyTenant)));
 }
 
-export const verifyDnsName = () => {
-    var cfg = window.config;
-    return `${cfg.AUTH0_DOMAIN.replace(/\./g, '-')}.${cfg.CRIIPTO_VERIFY_TLD}`;
-};
-
 export const tryToJS = (candidate) => {
     return candidate ? candidate.toJS() : null;
 }

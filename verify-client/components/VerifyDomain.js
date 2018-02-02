@@ -5,6 +5,13 @@ import _ from 'lodash';
 import { tryToJS } from '../dsl';
 import VerifyApplication from '../containers/VerifyApplication';
 
+// Just for suggestions, may be taken already
+const verifyDnsName = () => {
+    var cfg = window.config;
+    return `${cfg.AUTH0_DOMAIN.replace(/\./g, '-')}.${cfg.CRIIPTO_VERIFY_TLD}`;
+};
+
+
 class VerifyDomain extends Component {
     static propTypes = {
         domainLoading: PropTypes.bool.isRequired,
@@ -25,7 +32,8 @@ class VerifyDomain extends Component {
             this.props.mergeVerifyDomain(
                 this.props.existingTenant,
                 this.props.verifyLinkTemplates,
-                this.props.verifyLinks);
+                this.props.verifyLinks,
+                verifyDnsName());
         }
     }
 

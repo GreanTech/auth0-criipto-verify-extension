@@ -3,7 +3,7 @@ import { fromJS } from 'immutable';
 import * as constants from '../../constants';
 import createReducer from '../utils/createReducer';
 import _ from 'lodash'; 
-import {verifyDnsName, verifyRealm} from '../../dsl';
+import {verifyRealm} from '../../dsl';
 
 let initialStateTenants = {
   loading: false,
@@ -55,15 +55,12 @@ export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { 
       error: `An error occured while loading the Criipto Verify domain: ${action.errorMessage}`
     }),
   [constants.MERGE_VERIFY_DOMAINS_FULFILLED]: (state, action) => {
-    var expected = verifyDnsName();
-    var filtered = _.filter(action.payload.domains || [], domain =>
-      domain.name && domain.name === expected);
-    var mapped = _.map(filtered, fromJS);
-    var existingDomain = _.first(mapped) || null;
+    var candidate = action.payload.existingDomain;
+    var mapped = candidate ? fromJS(candidate) : null;
     return state.merge({
       loading: false,
       error: null,
-      existingDomain: existingDomain
+      existingDomain: mapped
     })},
   [constants.ENROLL_VERIFY_DOMAIN_PENDING]: (state) =>
     state.merge({

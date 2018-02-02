@@ -3,7 +3,7 @@ import * as constants from '../constants';
 import _ from 'lodash'; 
 import renewAuth from './auth';
 import { toJS } from 'immutable';
-import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyDnsName, verifyRealm, verifyApplication} from '../dsl'
+import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyRealm, verifyApplication} from '../dsl'
 
 const getScopedClaims = (scopedClaimsLink) => {
     // User may already have onboarded before
@@ -107,7 +107,14 @@ function tenantDomainsResource(verifyTenant, verifyLinkTemplates) {
     return verifyDomainsResource;
 };
 
-export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks) {
+const filterDomainsByDnsName = (domains, dnsName) => {
+    var filtered = _.filter(domains || [], domain =>
+        domain.name && domain.name === dnsName);
+    var existingDomain = _.first(filtered) || null;  
+    return existingDomain;
+};
+
+export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
     return (dispatch) => {
         var verifyDomainResource = 
             tenantDomainsResource(verifyTenant, verifyLinkTemplates);
@@ -120,9 +127,9 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
                         .then(tenantDomains => {
                             if (!tenantDomains.domains || tenantDomains.domains.length === 0)
                             {
-                                dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks));
+                                dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
                             }
-                            return tenantDomains;
+                            return { existingDomain: filterDomainsByDnsName(tenantDomains, dnsName) };
                         })
                         .catch(error => {
                             if (!error || !error.response || error.response.status != 400) {
@@ -143,13 +150,13 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
     }
 };
 
-export function enrollVerifyDomain(verifyTenant, verifyLinks) {
+function enrollVerifyDomain(verifyTenant, verifyLinks, dnsName) {
     var enrollLink = _.find(verifyLinks, { 'rel': 'easyid:enrollment' });
     var cfg = window.config;
     var payload = {
         tenantId: verifyTenantId(verifyTenant),
         entityId : verifyTenant.entityIdentifier,
-        domainName: verifyDnsName()
+        domainName: dnsName
     };
     return (dispatch) => {
         dispatch({
@@ -166,7 +173,7 @@ export function enrollVerifyDomain(verifyTenant, verifyLinks) {
                         }
                     ).then(getPayload)
                     .then(p => {
-                        dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks));
+                        dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
                         return p;                        
                     })
             }
@@ -174,11 +181,11 @@ export function enrollVerifyDomain(verifyTenant, verifyLinks) {
     }
 };
 
-export function createVerifyDomain(verifyTenant, verifyLinkTemplates) {
+function createVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName) {
     var verifyDomainsResource = 
         tenantDomainsResource(verifyTenant, verifyLinkTemplates);
     var payload = {
-        name: verifyDnsName(),
+        name: dnsName,
         production: false
     };
     return (dispatch) => {
@@ -195,6 +202,9 @@ export function createVerifyDomain(verifyTenant, verifyLinkTemplates) {
                             }
                         }
                     ).then(getPayload)
+                    .then(r => {
+                        return { existingDomain : filterDomainsByDnsName(r.domains, dnsName) };
+                    })
             }
         })
     }
