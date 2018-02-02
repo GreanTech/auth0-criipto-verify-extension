@@ -83,7 +83,7 @@ export function checkDomainAvailable(dnsName) {
                     axios.get(dnsAvailableResource)
                         .then(getPayload)
                         .then(r => {
-                            return r;
+                            return { available: r.available, nameCandidate: dnsName };
                         })
             }
         });
@@ -149,6 +149,7 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
                             if (!tenantDomains.domains || tenantDomains.domains.length === 0)
                             {
                                 dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
+                                return { existingDomain: null };
                             }
                             return { existingDomain: filterDomainsByDnsName(tenantDomains.domains, dnsName) };
                         })

@@ -43,6 +43,7 @@ export const verifyApplication = () => {
 
 // Just for suggestions, may be taken already
 export const defaultVerifyDnsName = () => {
-    var cfg = window.config;
-    return `${cfg.AUTH0_DOMAIN.replace(/\./g, '-')}.${cfg.CRIIPTO_VERIFY_TLD}`;
+    return 'nobankid-without-socialno.prove.id';
+    // var cfg = window.config;
+    // return `${cfg.AUTH0_DOMAIN.replace(/\./g, '-')}.${cfg.CRIIPTO_VERIFY_TLD}`;
 };

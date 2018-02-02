@@ -40,7 +40,7 @@ export const verifyTenants = createReducer(fromJS(initialStateTenants), { // esl
 let initialStateDefaultDomainAvailable = {
   loading: false,
   error: null,
-  domainAvailable: false
+  domainStatus: null
 };
 
 export const checkDomainAvailable = createReducer(fromJS(initialStateDefaultDomainAvailable), { // eslint-disable-line import/prefer-default-export
@@ -58,7 +58,7 @@ export const checkDomainAvailable = createReducer(fromJS(initialStateDefaultDoma
     return state.merge({
       loading: false,
       error: null,
-      domainAvailable: action.payload.available
+      domainStatus: fromJS(action.payload)
     })}
 });
 
