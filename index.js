@@ -21,11 +21,10 @@ nconf
   .env()
   .file(path.join(__dirname, './server/config.json'))
   .defaults({
-    DATA_CACHE_MAX_AGE: 1000 * 10,
     NODE_ENV: process.env.NODE_ENV || 'development',
     HOSTING_ENV: 'default',
     PORT: 3000,
-    TITLE: 'User Management'
+    TITLE: 'Criipto Verify Management'
   });
 
 // Start the server.

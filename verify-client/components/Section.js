@@ -5,6 +5,7 @@ import VerifyTenant from './VerifyTenant';
 import Connection from './Connection';
 import { toJS } from 'immutable';
 import {createVerifyTenant} from '../actions/verify';
+import {tryToJS} from '../dsl';
 
 class Section extends Component {
   static propTypes = {
@@ -64,7 +65,7 @@ class Section extends Component {
 function mapStateToProps(state) {
   return {
     user: state.auth.get('user'),
-    verifyLinks: state.verifyLinks.get('links').toJS(),
+    verifyLinks: tryToJS(state.verifyLinks.get('links')),
     verifyTenants: state.verifyTenants.get('tenants').toJS(),
     connections: state.connections.get('records').toJS(),
     tenantsLoading: state.verifyTenants.get('loading'),

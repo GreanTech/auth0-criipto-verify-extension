@@ -1,13 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchVerifyDomain, enrollVerifyDomain } from '../actions/verify';
+import _ from 'lodash';
+import { tryToJS } from '../dsl';
+import VerifyApplication from '../containers/VerifyApplication';
 
 class VerifyDomain extends Component {
     static propTypes = {
         domainLoading: PropTypes.bool.isRequired,
         existingTenant: PropTypes.object.isRequired,
         verifyLinks: PropTypes.array.isRequired,
-        verifyLinkTemplates: PropTypes.array.isRequired,        
+        verifyLinkTemplates: PropTypes.array.isRequired,
         fetchVerifyDomain: PropTypes.func.isRequired,
         enrollVerifyDomain: PropTypes.func.isRequired,
         existingDomain: PropTypes.object,
@@ -18,30 +21,32 @@ class VerifyDomain extends Component {
     }
 
     componentDidMount() {
-        this.props.fetchVerifyDomain(
-            this.props.existingTenant, 
-            this.props.verifyLinkTemplates,
-            this.props.verifyLinks);
+        if (!this.props.existingDomain
+            && _.find(this.props.verifyLinkTemplates, { 'rel': 'easyid:tenant-domains' })) {
+            this.props.fetchVerifyDomain(
+                this.props.existingTenant,
+                this.props.verifyLinkTemplates,
+                this.props.verifyLinks);
+        }
     }
 
     render() {
         if (this.props.domainLoading) {
-            return (<span>Checking for existing Criipto Verify DNS domain</span>)
+            return (<span>Checking for existing Criipto Verify DNS domain</span>);
         } else if (this.props.existingDomain) {
             return (
-                <span>
-                    OK, existing Criipto Verify DNS domain found:
-                    {this.props.existingDomain.name}
-                </span>
+                <section>
+                    <span>
+                        OK, existing Criipto Verify DNS domain found:
+                        {this.props.existingDomain.name}
+                    </span>
+                    <VerifyApplication/>
+                </section>
             );
         } else {
-            return <span>No Criipto Verify DNS domain found - creating one...</span>;
+            return (<span>No Criipto Verify DNS domain found - creating one...</span>);
         }
     }
-}
-
-function tryToJS(candidate) {
-    return candidate ? candidate.toJS() : null;
 }
 
 function mapStateToProps(state) {

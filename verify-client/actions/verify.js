@@ -4,7 +4,6 @@ import _ from 'lodash';
 import renewAuth from './auth';
 import { toJS } from 'immutable';
 import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyDnsName } from '../dsl'
-import { verifyLinks } from "../redux/reducers/verify";
 
 const getScopedClaims = (scopedClaimsLink) => {
     // User may already have onboarded before
@@ -18,7 +17,7 @@ const getScopedClaims = (scopedClaimsLink) => {
         });
 }
 
-export function fetchVerifyTenants() {
+function fetchVerifyTenants() {
     return (dispatch) => { 
         dispatch({
             type: constants.FETCH_VERIFY_TENANTS,
@@ -44,6 +43,31 @@ export function fetchVerifyTenants() {
         })
     }
 };
+
+function fetchVerifyLinks() {
+    return { 
+        type: constants.FETCH_VERIFY_LINKS,
+        payload: {
+            promise: 
+                axios.get(window.config.VERIFY_API_ROOT)
+                .then(getPayload)
+        }
+    }
+  };
+  
+export function fetchCore() {
+    return (dispatch) => { 
+        dispatch( {
+            type: "FETCH_CORE",
+            payload : {
+                promise: Promise.all([
+                    dispatch(fetchVerifyTenants()),
+                    dispatch(fetchVerifyLinks())
+                ])
+            }
+        })
+    }
+}
 
 export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
     var accessRequestLink = _.find(verifyLinks, { 'rel': 'easyid:access-request'});
@@ -176,7 +200,7 @@ export function createVerifyDomain(verifyTenant, verifyLinkTemplates) {
     }
 };
 
-export function fetchVerifyApplication(verifyDomain) {
+export function fetchVerifyApplications(verifyDomain) {
     var applicationsLink = _.find(verifyDomain.links, { 'rel': 'easyid:applications' });
     return (dispatch) => {
         dispatch({
@@ -188,15 +212,3 @@ export function fetchVerifyApplication(verifyDomain) {
         })
     }
 };
-
-export function fetchVerifyLinks() {
-    return { 
-        type: constants.FETCH_VERIFY_LINKS,
-        payload: {
-            promise: 
-                axios.get(window.config.VERIFY_API_ROOT)
-                .then(getPayload)
-        }
-    }
-  };
-  

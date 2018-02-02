@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import {connect} from 'react-redux';
 import {createVerifyTenant} from '../actions/verify';
 import VerifyDomain from './VerifyDomain';
+import {tryToJS} from '../dsl';
 
 class VerifyTenant extends Component {
   static propTypes = {
@@ -23,21 +24,18 @@ class VerifyTenant extends Component {
       this.props.verifyLinkTemplates);
   }
 
+  
   render() {
     if (this.props.tenantsLoading) {
       return (<span>Checking for existing Criipto Verify tenants</span>);
     } else if (this.props.existingTenant && this.props.existingTenant.entityIdentifier) {
       return (
-        <div>
-          <p>
-            <span>
-              OK, existing Criipto Verify tenant found: {this.props.existingTenant.name}
-            </span>
-          </p>
-          <p>
-            <VerifyDomain/>
-          </p>
-        </div>
+        <section>
+          <span>
+            OK, existing Criipto Verify tenant found: {this.props.existingTenant.name}
+          </span>
+          <VerifyDomain/>
+        </section>     
       );
     } else {
       return (
@@ -52,8 +50,8 @@ class VerifyTenant extends Component {
 function mapStateToProps(state) {
   return {
     user: state.auth.get('user'),
-    verifyLinks: state.verifyLinks.get('links').toJS(),
-    verifyLinkTemplates: state.verifyLinks.get('linkTemplates').toJS(),
+    verifyLinks: tryToJS(state.verifyLinks.get('links')),
+    verifyLinkTemplates: tryToJS(state.verifyLinks.get('linkTemplates')),
     tenantsLoading: state.verifyTenants.get('loading'),
     existingTenant: state.verifyTenants.get('existingTenant').toJS(),
   };

@@ -3,7 +3,7 @@ import { fromJS } from 'immutable';
 import * as constants from '../../constants';
 import createReducer from '../utils/createReducer';
 import _ from 'lodash'; 
-import {verifyDnsName} from '../../dsl';
+import {verifyDnsName, verifyRealm} from '../../dsl';
 
 let initialStateTenants = {
   loading: false,
@@ -102,8 +102,8 @@ export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { 
 let initialStateLinks = {
   loading: false,
   error: null,
-  linkTemplates: [],
-  links: []
+  linkTemplates: null,
+  links: null
 };
 
 export const verifyLinks = createReducer(fromJS(initialStateLinks), { // eslint-disable-line import/prefer-default-export
@@ -126,4 +126,34 @@ export const verifyLinks = createReducer(fromJS(initialStateLinks), { // eslint-
         links: fromJS(payload.links)
       })
     }
+});
+
+let initialStateApplications = {
+  loading: false,
+  error: null,
+  existingApplication: null
+};
+
+export const verifyApplications = createReducer(fromJS(initialStateApplications), { // eslint-disable-line import/prefer-default-export
+  [constants.FETCH_VERIFY_APPLICATIONS_PENDING]: (state) =>
+  state.merge({
+    loading: true,
+    error: null
+  }),
+  [constants.FETCH_VERIFY_APPLICATIONS_REJECTED]: (state, action) =>
+    state.merge({
+      loading: false,
+      error: `An error occured while loading the Criipto Verify applications: ${action.errorMessage}`
+  }),
+  [constants.FETCH_VERIFY_APPLICATIONS_FULFILLED]: (state, action) => {
+    var expected = verifyRealm();
+    var filtered = _.filter(action.payload.applications || [], app =>
+      app.realm && app.realm === expected);
+    var mapped = _.map(filtered, fromJS);
+    var existingApplication = _.first(mapped) || null;
+    return state.merge({
+      loading: false,
+      error: null,
+      existingApplication: existingApplication
+    })}
 });

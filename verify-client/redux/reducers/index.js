@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 import { routerReducer } from 'react-router-redux';
 
-import { verifyTenants, verifyLinks, verifyDomains } from './verify'
+import { verifyTenants, verifyLinks, verifyDomains, verifyApplications } from './verify'
 import { auth } from './auth';
 import { connections } from './connections';
 
@@ -16,6 +16,7 @@ const state = {
   verifyTenants,
   verifyLinks,
   verifyDomains,
+  verifyApplications,
   connections,
   lastAction,
   form: formReducer

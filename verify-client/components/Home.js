@@ -1,15 +1,13 @@
 import React, {Component, PropTypes} from 'react';
 import { connect } from 'react-redux';
-// import Header from './Header';
 import Section from './Section';
 import Footer from './Footer';
-import {fetchVerifyTenants, fetchVerifyLinks} from '../actions/verify'
+import {fetchCore} from '../actions/verify'
 import {fetchConnections} from '../actions/connection'
 
 class Home extends Component {
   static propTypes = {
-    fetchVerifyLinks : PropTypes.func.isRequired,
-    fetchVerifyTenants : PropTypes.func.isRequired,
+    fetchCore: PropTypes.func.isRequired,
     fetchConnections: PropTypes.func.isRequired
   }
   
@@ -18,8 +16,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchVerifyLinks();
-    this.props.fetchVerifyTenants();
+    this.props.fetchCore();
     this.props.fetchConnections();
   }
 
@@ -35,6 +32,6 @@ class Home extends Component {
 }
 
 const mapState = ({verifyLinks, verifyTenants, connections}) => ({verifyLinks, verifyTenants, connections});
-const mapDispatch = {fetchVerifyLinks, fetchVerifyTenants, fetchConnections};
+const mapDispatch = {fetchCore, fetchConnections};
 
 export default connect(mapState, mapDispatch)(Home);
