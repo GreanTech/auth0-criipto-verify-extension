@@ -35,13 +35,22 @@ class VerifyDomain extends Component {
                 this.props.verifyLinkTemplates,
                 this.props.verifyLinks,                
                 defaultVerifyDnsName());
-        } else if (this.props.domainStatus.available) {
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        // Detect when suggested domain is one that is available
+        if (!this.props.existingDomain
+            && prevProps.domainStatus
+            && !prevProps.domainStatus.available
+            && this.props.domainStatus 
+            && this.props.domainStatus.available) {
             this.props.mergeVerifyDomain(
                 this.props.existingTenant,
                 this.props.verifyLinkTemplates,
                 this.props.verifyLinks,                
                 this.props.domainStatus.nameCandidate);
-        }
+        }        
     }
 
     render() {
@@ -57,7 +66,7 @@ class VerifyDomain extends Component {
                     <VerifyApplication/>
                 </section>
             );
-        } else if (!this.props.domainStatus.available) {
+        } else if (this.props.domainStatus && !this.props.domainStatus.available) {
             return (
                 <section className="form-group">
                     <p>
@@ -77,7 +86,7 @@ class VerifyDomain extends Component {
 
 function mapStateToProps(state) {
     return {
-        domainStatus: state.checkDomainAvailable.get('domainStatus').toJS(),
+        domainStatus: tryToJS(state.checkDomainAvailable.get('domainStatus')),
         domainLoading: state.verifyDomains.get('loading'),
         existingDomain: tryToJS(state.verifyDomains.get('existingDomain')),
         verifyLinks: state.verifyLinks.get('links').toJS(),
