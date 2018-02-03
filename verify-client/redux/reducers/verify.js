@@ -116,7 +116,8 @@ export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { 
   [constants.CREATE_VERIFY_DOMAIN_FULFILLED]: (state, action) =>
     state.merge({
       loading: false,
-      error: null
+      error: null,
+      existingDomain: fromJS(action.payload.existingDomain)
     })
 });
 
