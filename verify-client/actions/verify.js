@@ -146,12 +146,12 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
                     axios.get(verifyDomainResource, jsonResp)
                         .then(getPayload)
                         .then(tenantDomains => {
-                            if (!tenantDomains.domains || tenantDomains.domains.length === 0)
+                            var candidate = filterDomainsByDnsName(tenantDomains.domains, dnsName);
+                            if (!candidate) 
                             {
-                                dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
-                                return { existingDomain: null };
+                                dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName));
                             }
-                            return { existingDomain: filterDomainsByDnsName(tenantDomains.domains, dnsName) };
+                            return { existingDomain: candidate };
                         })
                         .catch(error => {
                             if (!error || !error.response || error.response.status != 400) {
@@ -224,8 +224,8 @@ function createVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName) {
                             }
                         }
                     ).then(getPayload)
-                    .then(r => {
-                        return { existingDomain : filterDomainsByDnsName(r.domains, dnsName) };
+                    .then(d => {
+                        return { existingDomain : d };
                     })
             }
         })
