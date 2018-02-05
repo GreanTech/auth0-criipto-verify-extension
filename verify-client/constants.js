@@ -36,11 +36,14 @@ export const GAUSS_ENTITY_ID = window.config.GAUSS_ENTITY_ID;
 
 export const VERIFY_TENANT_ID_PREFIX = 'urn:grn:easyid:tenant:';
 
-// Fetch tenants
+// Fetch tenants (from Gauss)
 export const FETCH_VERIFY_TENANTS = "FETCH_VERIFY_TENANTS";
 export const FETCH_VERIFY_TENANTS_PENDING = 'FETCH_VERIFY_TENANTS_PENDING';
 export const FETCH_VERIFY_TENANTS_REJECTED = 'FETCH_VERIFY_TENANTS_REJECTED';
 export const FETCH_VERIFY_TENANTS_FULFILLED = 'FETCH_VERIFY_TENANTS_FULFILLED';
+
+// Fetch the Gauss tenants that are also registered in Verify
+export const FETCH_REGISTERED_TENANTS_FULFILLED = "FETCH_REGISTERED_TENANTS_FULFILLED";
 
 // Check if we can use the 'default' (calculated from the Auth0 tenant domain) DNS domain
 export const CHECK_VERIFY_DOMAIN_AVAILABLE = "CHECK_VERIFY_DOMAIN_AVAILABLE";

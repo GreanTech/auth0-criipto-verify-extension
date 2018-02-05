@@ -9,7 +9,8 @@ let initialStateTenants = {
   loading: false,
   error: null,
   tenants: [],
-  existingTenant: {}
+  existingTenant: {},
+  registeredTenants: []
 };
 
 export const verifyTenants = createReducer(fromJS(initialStateTenants), { // eslint-disable-line import/prefer-default-export
@@ -24,16 +25,16 @@ export const verifyTenants = createReducer(fromJS(initialStateTenants), { // esl
       error: `An error occured while loading the Criipto Verify tenants: ${action.errorMessage}`
     }),
   [constants.FETCH_VERIFY_TENANTS_FULFILLED]: (state, action) => {
-    var filtered = _.filter(action.payload, cs =>
-      cs.organization.entityIdentifier === constants.GAUSS_ENTITY_ID);
-    var mapped = _.map(filtered, cs => fromJS(cs.organization));
-    var existingTenant = _.first(mapped) || {};
-
     return state.merge({
       loading: false,
       error: null,
-      tenants: fromJS(action.payload),
-      existingTenant: existingTenant
+      tenants: fromJS(action.payload)
+    })},
+  [constants.FETCH_REGISTERED_TENANTS_FULFILLED]: (state, action) => {
+    var pl = action.payload;
+    return state.merge({
+      registeredTenants: fromJS(pl.registeredTenants),
+      existingTenant: fromJS(pl.existingTenant)
     })}
 });
 
