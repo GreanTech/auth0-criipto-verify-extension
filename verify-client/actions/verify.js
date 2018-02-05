@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as constants from '../constants';
 import _ from 'lodash'; 
-import renewAuth from './auth';
+import { localLogout, login } from './auth';
 import { toJS } from 'immutable';
 import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyRealm, verifyApplication, defaultVerifyDnsName} from '../dsl'
 
@@ -103,20 +103,19 @@ export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
             type: constants.CREATE_VERIFY_TENANT,
             payload: {
                 promise:
-                    Promise.all([
-                        axios.post(
-                            accessRequestLink.href, 
-                            payload, 
-                            {
-                                headers: {
-                                    'Content-Type' : contentType('access-request')
-                                }
-                            }),
-                            dispatch(renewAuth()),
-                            dispatch(fetchVerifyTenants())
-                        ])
+                    axios.post(
+                        accessRequestLink.href, 
+                        payload, 
+                        {
+                            headers: {
+                                'Content-Type' : contentType('access-request')
+                            }
+                    })
+                    .then(() => { return dispatch(localLogout()); })
+                    .then(() => { return dispatch(login('/verify')); })
+                }
             }
-        })
+        )
     }
 };
 
@@ -161,7 +160,7 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
                             var message = (error.response.data || {}).message || '';
                             if(message.indexOf(verifyTenantId(verifyTenant)) > 0
                                 && message.indexOf('is not registered') > 0 ) {
-                                dispatch(enrollVerifyDomain(verifyTenant, verifyLinks));
+                                dispatch(enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
                             }
                             else {
                                 throw error;
@@ -172,7 +171,7 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
     }
 };
 
-function enrollVerifyDomain(verifyTenant, verifyLinks, dnsName) {
+function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
     var enrollLink = _.find(verifyLinks, { 'rel': 'easyid:enrollment' });
     var cfg = window.config;
     var payload = {
@@ -194,9 +193,8 @@ function enrollVerifyDomain(verifyTenant, verifyLinks, dnsName) {
                             }
                         }
                     ).then(getPayload)
-                    .then(p => {
-                        dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
-                        return p;                        
+                    .then(() => {
+                        return dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
                     })
             }
         })

@@ -8,6 +8,7 @@ const initialState = {
   error: null,
   isAuthenticated: false,
   isAuthenticating: false,
+  renewingAuthentication: false,
   issuer: null,
   token: null,
   decodedToken: null,
@@ -29,6 +30,7 @@ export const auth = createReducer(fromJS(initialState), { // eslint-disable-line
     state.merge({
       isAuthenticated: true,
       isAuthenticating: false,
+      renewingAuthentication: false,
       user: action.payload.user,
       token: action.payload.token,
       decodedToken: action.payload.decodedToken,
@@ -41,5 +43,11 @@ export const auth = createReducer(fromJS(initialState), { // eslint-disable-line
       token: null,
       decodedToken: null,
       isAuthenticated: false
+    }),
+  [constants.RENEW_LOGIN]: (state) =>
+    state.merge({
+      isAuthenticated: false,
+      isAuthenticating: true,
+      renewingAuthentication: true
     })
 });

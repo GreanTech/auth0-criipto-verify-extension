@@ -16,22 +16,23 @@ const webAuth = new auth0.WebAuth({ // eslint-disable-line no-undef
   }
 });
 
+const authorizeOptions = {
+  responseType: 'id_token',
+  responseMode: 'form_post',
+  redirectUri: `${window.config.BASE_URL}/login`,
+  scope: 'openid email name scopedUserClaims'
+};
+
 export function renewAuth() {
   return (dispatch) => {
-    webAuth.renewAuth({}, function (err, resp) {
-        return processTokens(dispatch, resp.idToken);
-    });
-  }
-};
+    return dispatch(login('/verify'));
+  };
+}
 
 export function login(returnUrl) {
   sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
 
-  webAuth.authorize({
-    responseType: 'id_token',
-    redirectUri: `${window.config.BASE_URL}/login`,
-    scope: 'openid email name scopedUserClaims'
-  });
+  webAuth.authorize(authorizeOptions);
 
   return {
     type: constants.SHOW_LOGIN
@@ -47,6 +48,14 @@ function isExpired(decodedToken) {
   d.setUTCSeconds(decodedToken.exp);
 
   return !(d.valueOf() > (new Date().valueOf() + (1000)));
+}
+
+export function localLogout() {
+  return (dispatch) => {
+    sessionStorage.removeItem('criipto-verify:apiToken');
+
+    dispatch({ type: constants.RENEW_LOGIN });
+  }
 }
 
 export function logout() {
@@ -98,7 +107,12 @@ const processTokens = (dispatch, apiToken, returnTo) => {
 };
 
 export function loadCredentials() {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    var state = getState();
+    if (state.auth.get('renewingAuthentication')) {
+      return;
+    }
+
     const token = sessionStorage.getItem('criipto-verify:apiToken');
     if (token || window.location.hash) {
 

@@ -10,6 +10,7 @@ class VerifyTenant extends Component {
     tenantsLoading: PropTypes.bool.isRequired,
     createVerifyTenant : PropTypes.func.isRequired,
     existingTenant: PropTypes.object.isRequired,
+    renewingAuthentication: PropTypes.bool.isRequired
   };
 
   constructor(props) {
@@ -27,12 +28,16 @@ class VerifyTenant extends Component {
   render() {
     if (this.props.tenantsLoading) {
       return (<span>Checking for existing Criipto Verify tenants</span>);
+    } else if (this.props.renewingAuthentication) {
+      return (<span>Hang on while we refresh your login session</span>);
     } else if (this.props.existingTenant && this.props.existingTenant.entityIdentifier) {
       return (
         <section>
-          <span>
-            OK, existing Criipto Verify tenant found: {this.props.existingTenant.name}
-          </span>
+          <p>
+            <span>
+              OK, existing Criipto Verify tenant found: {this.props.existingTenant.name}
+            </span>
+            </p>
           <VerifyDomain/>
         </section>     
       );
@@ -53,6 +58,7 @@ function mapStateToProps(state) {
     verifyLinkTemplates: tryToJS(state.verifyLinks.get('linkTemplates')),
     tenantsLoading: state.verifyTenants.get('loading'),
     existingTenant: state.verifyTenants.get('existingTenant').toJS(),
+    renewingAuthentication: state.auth.get('renewingAuthentication')
   };
 };
 

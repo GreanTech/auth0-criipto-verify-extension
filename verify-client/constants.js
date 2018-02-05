@@ -12,6 +12,7 @@ export const REDIRECT_LOGIN = 'REDIRECT_LOGIN';
 export const LOGIN_PENDING = 'LOGIN_PENDING';
 export const LOGIN_FAILED = 'LOGIN_FAILED';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const RENEW_LOGIN = 'RENEW_LOGIN';
 
 // Logout.
 export const LOGOUT_PENDING = 'LOGOUT_PENDING';

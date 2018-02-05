@@ -4,14 +4,12 @@ import VerifyLink from './VerifyLink';
 import VerifyTenant from './VerifyTenant';
 import Connection from './Connection';
 import { toJS } from 'immutable';
-import {createVerifyTenant} from '../actions/verify';
 import {tryToJS} from '../dsl';
 
 class Section extends Component {
   static propTypes = {
     user: PropTypes.object,
     tenantsLoading: PropTypes.bool.isRequired,
-    createVerifyTenant : PropTypes.func.isRequired,
     existingTenant: PropTypes.object.isRequired,
     domainLoading: PropTypes.bool.isRequired,
     existingDomain: PropTypes.object,
@@ -74,5 +72,4 @@ function mapStateToProps(state) {
   };
 }
 
-const mapDispatch = {createVerifyTenant};
-export default connect(mapStateToProps, mapDispatch)(Section);
+export default connect(mapStateToProps)(Section);

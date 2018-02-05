@@ -29,6 +29,8 @@ class VerifyDomain extends Component {
 
     componentDidMount() {
         if (!this.props.existingDomain
+            && this.props.domainStatus 
+            && this.props.domainStatus.available            
             && _.find(this.props.verifyLinkTemplates, { 'rel': 'easyid:tenant-domains' })) {
             this.props.mergeVerifyDomain(
                 this.props.existingTenant,
@@ -59,10 +61,12 @@ class VerifyDomain extends Component {
         } else if (this.props.existingDomain) {
             return (
                 <section>
-                    <span>
-                        OK, existing Criipto Verify DNS domain found:
-                        {this.props.existingDomain.name}
-                    </span>
+                    <p>
+                        <span>
+                            OK, existing Criipto Verify DNS domain found:
+                            {this.props.existingDomain.name}
+                        </span>
+                    </p>
                     <VerifyApplication/>
                 </section>
             );
@@ -70,9 +74,9 @@ class VerifyDomain extends Component {
             return (
                 <section className="form-group">
                     <p>
-                        Crickey, it looks like someone else has reserved the domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
+                        Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
                     <p>
-                        That was a guess on our part, based on your Auth0 tenants DNS name.
+                        Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
                         We'll need your assistance with selecting a new one of your liking:
                     </p>
                     <CheckDomainForm onCheck={this.checkAvailability} placeholder={this.props.domainStatus.nameCandidate}/>

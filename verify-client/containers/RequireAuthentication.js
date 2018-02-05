@@ -29,10 +29,10 @@ export default function RequireAuthentication(InnerComponent) {
     }
 
     render() {
-      if (this.props.auth.isAuthenticated) {
+      if (this.props.auth.isAuthenticated || this.props.auth.renewingAuthentication) {
         return <InnerComponent {...this.props} />;
       }
-
+      
       return <div></div>;
     }
   }
