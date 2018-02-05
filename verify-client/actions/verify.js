@@ -176,7 +176,8 @@ function fetchRegisteredTenants() {
         var verifyLinkTemplates = state.verifyLinks.get('linkTemplates').toJS();
         return Promise.all(
             _.map(gaussTenants, gaussTenant => {
-                return fetchVerifyTenantDomains(gaussTenant.organization, verifyLinkTemplates)
+                var verifyTenant = gaussTenant.organization;
+                return fetchVerifyTenantDomains(verifyTenant, verifyLinkTemplates)
                     .then(tenantDomains => [tenantDomains])
                     .catch(error => {
                         if (!error || !error.response) {
