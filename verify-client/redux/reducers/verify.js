@@ -69,6 +69,24 @@ let initialStateVerifyDomains = {
 };
 
 export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { // eslint-disable-line import/prefer-default-export
+  [constants.FETCH_VERIFY_DOMAINS_PENDING]: (state) =>
+    state.merge({
+      loading: true,
+      error: null
+    }),
+  [constants.FETCH_VERIFY_DOMAINS_REJECTED]: (state, action) =>
+    state.merge({
+      loading: false,
+      error: `An error occured while fetching the Criipto Verify domain: ${action.errorMessage}`
+    }),
+  [constants.FETCH_VERIFY_DOMAINS_FULFILLED]: (state, action) => {
+    var candidate = action.payload.existingDomain;
+    var mapped = candidate ? fromJS(candidate) : null;
+    return state.merge({
+      loading: false,
+      error: null,
+      existingDomain: mapped
+    })},
   [constants.MERGE_VERIFY_DOMAINS_PENDING]: (state) =>
     state.merge({
       loading: true,
@@ -77,7 +95,7 @@ export const verifyDomains = createReducer(fromJS(initialStateVerifyDomains), { 
   [constants.MERGE_VERIFY_DOMAINS_REJECTED]: (state, action) =>
     state.merge({
       loading: false,
-      error: `An error occured while loading the Criipto Verify domain: ${action.errorMessage}`
+      error: `An error occured while merging the Criipto Verify domain: ${action.errorMessage}`
     }),
   [constants.MERGE_VERIFY_DOMAINS_FULFILLED]: (state, action) => {
     var candidate = action.payload.existingDomain;

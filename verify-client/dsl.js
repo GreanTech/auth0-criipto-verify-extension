@@ -44,5 +44,6 @@ export const verifyApplication = () => {
 // Just for suggestions, may be taken already
 export const defaultVerifyDnsName = () => {
     var cfg = window.config;
-    return `${cfg.AUTH0_DOMAIN.replace(/\./g, '-')}.${cfg.CRIIPTO_VERIFY_TLD}`;
+    return `easyid-demo-eu-auth0-com-22.${cfg.CRIIPTO_VERIFY_TLD}`;
+    // return `${cfg.AUTH0_DOMAIN.replace(/\./g, '-')}.${cfg.CRIIPTO_VERIFY_TLD}`;
 };

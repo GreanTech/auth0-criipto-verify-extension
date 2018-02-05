@@ -18,29 +18,27 @@ const getScopedClaims = (scopedClaimsLink) => {
 }
 
 function fetchVerifyTenants() {
-    return (dispatch) => { 
-        dispatch({
-            type: constants.FETCH_VERIFY_TENANTS,
-            payload: {
-                promise:
-                    axios.get(window.config.GAUSS_API_ROOT, jsonResp)
-                        .then(getPayload)
-                        .then((gaussRoot) => {
-                            var scopedClaimsLink = _.find(
-                                gaussRoot.linkTemplates, 
-                                { 'rel': 'gauss:scoped-user-claims' });
-                            if (scopedClaimsLink)
-                            {
-                                return getScopedClaims(scopedClaimsLink);
-                            } 
-                            else
-                            {
-                                // Unknown user
-                                return [];
-                            }
-                        })
-            }
-        })
+    return {
+        type: constants.FETCH_VERIFY_TENANTS,
+        payload: {
+            promise:
+                axios.get(window.config.GAUSS_API_ROOT, jsonResp)
+                    .then(getPayload)
+                    .then((gaussRoot) => {
+                        var scopedClaimsLink = _.find(
+                            gaussRoot.linkTemplates, 
+                            { 'rel': 'gauss:scoped-user-claims' });
+                        if (scopedClaimsLink)
+                        {
+                            return getScopedClaims(scopedClaimsLink);
+                        } 
+                        else
+                        {
+                            // Unknown user
+                            return [];
+                        }
+                    })
+        }
     }
 };
 
@@ -63,8 +61,10 @@ export function fetchCore() {
                 promise: Promise.all([
                     dispatch(fetchVerifyTenants()),
                     dispatch(fetchVerifyLinks())
-                ]).then(() => {
-                    dispatch(checkDomainAvailable(defaultVerifyDnsName()))
+                ]).then((resolved) => { 
+                    return dispatch(checkDomainAvailable(defaultVerifyDnsName()))
+                }).then((resolved) => {
+                    return dispatch(fetchExistingVerifyDomains(defaultVerifyDnsName()))
                 })
             }
         })
@@ -132,6 +132,46 @@ const filterDomainsByDnsName = (domains, dnsName) => {
         domain.name && domain.name === dnsName);
     var existingDomain = _.first(filtered) || null;  
     return existingDomain;
+};
+
+function fetchExistingVerifyDomains(dnsName) {
+    return (dispatch, getState) => {
+        var state = getState();
+        var existingTenant = state.verifyTenants.get('existingTenant').toJS();
+        var verifyLinkTemplates = state.verifyLinks.get('linkTemplates').toJS();
+        dispatch(fetchVerifyDomain(existingTenant, verifyLinkTemplates, dnsName));
+    }
+};
+
+function fetchVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName) {
+    var verifyDomainResource = 
+        tenantDomainsResource(verifyTenant, verifyLinkTemplates);
+    return {
+        type: constants.MERGE_VERIFY_DOMAINS,
+        payload: {
+            promise:
+                axios.get(verifyDomainResource, jsonResp)
+                    .then(getPayload)
+                    .then(tenantDomains => {
+                        var candidate = filterDomainsByDnsName(tenantDomains.domains, dnsName);
+                        return { existingDomain: candidate };
+                    })
+                    .catch(error => {
+                        if (!error || !error.response || error.response.status != 400) {
+                            throw error;
+                        }
+
+                        var message = (error.response.data || {}).message || '';
+                        if(message.indexOf(verifyTenantId(verifyTenant)) > 0
+                            && message.indexOf('is not registered') > 0 ) {
+                                return { existingDomain: null };
+                        }
+                        else {
+                            throw error;
+                        }
+                    })
+        }
+    }
 };
 
 export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
@@ -208,53 +248,49 @@ function createVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName) {
         name: dnsName,
         production: false
     };
-    return (dispatch) => {
-        dispatch({
-            type: constants.CREATE_VERIFY_DOMAIN,
-            payload: {
-                promise: 
-                    axios.post(
-                        verifyDomainsResource,
-                        payload,
-                        {
-                            headers: {
-                                'Content-Type' : contentType('domain')
-                            }
+    return {
+        type: constants.CREATE_VERIFY_DOMAIN,
+        payload: {
+            promise: 
+                axios.post(
+                    verifyDomainsResource,
+                    payload,
+                    {
+                        headers: {
+                            'Content-Type' : contentType('domain')
                         }
-                    ).then(getPayload)
-                    .then(d => {
-                        return { existingDomain : d };
-                    })
-            }
-        })
+                    }
+                ).then(getPayload)
+                .then(d => {
+                    return { existingDomain : d };
+                })
+        }
     }
 };
 
 export function mergeVerifyApplications(verifyDomain) {
     var applicationsLink = _.find(verifyDomain.links, { 'rel': 'easyid:applications' });
-    return (dispatch) => {
-        dispatch({
-            type: constants.MERGE_VERIFY_APPLICATIONS,
-            payload: {
-                promise: 
-                    axios.get(applicationsLink.href, jsonResp)
-                        .then(getPayload)
-                        .then(r => {
-                            if (_.find(r.applications, { realm: verifyRealm() })) {
-                                return r;
-                            } else {
-                                var payload = verifyApplication();
-                                return axios.post(
-                                    applicationsLink.href,
-                                    payload,
-                                    {
-                                        headers: {
-                                            'Content-Type': contentType('application')
-                                        }    
-                                }).then(getPayload)
-                            }
-                        })
-            }
-        })
+    return {
+        type: constants.MERGE_VERIFY_APPLICATIONS,
+        payload: {
+            promise: 
+                axios.get(applicationsLink.href, jsonResp)
+                    .then(getPayload)
+                    .then(r => {
+                        if (_.find(r.applications, { realm: verifyRealm() })) {
+                            return r;
+                        } else {
+                            var payload = verifyApplication();
+                            return axios.post(
+                                applicationsLink.href,
+                                payload,
+                                {
+                                    headers: {
+                                        'Content-Type': contentType('application')
+                                    }    
+                            }).then(getPayload)
+                        }
+                    })
+        }
     }
 };
