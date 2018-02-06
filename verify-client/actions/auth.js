@@ -2,8 +2,9 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { push } from 'react-router-redux';
 import uuid from 'uuid';
-
+import { tryToJS } from '../dsl';
 import * as constants from '../constants';
+import { locale } from 'moment';
 
 const issuer = window.config.CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER || `https://${window.config.CRIIPTO_VERIFY_AUTH0_DOMAIN}/`;
 
@@ -23,9 +24,18 @@ const authorizeOptions = {
   scope: 'openid email name scopedUserClaims'
 };
 
-export function renewAuth() {
-  return (dispatch) => {
-    return dispatch(login('/verify'));
+export function renewAuth(returnUrl) {
+  return (dispatch, getState) => {
+    var state = getState();
+    var domainAvailable = tryToJS(state.checkDomainAvailable.get('domainStatus'));
+    console.log("domainAvailable", domainAvailable);
+    if (domainAvailable && domainAvailable.available) {
+      console.log("Stored available DNS domain in localStorage", domainAvailable.nameCandidate);
+      localStorage.setItem('criipto-verify-extension:dnsNameCandidate', domainAvailable.nameCandidate);
+      var readback = localStorage.getItem('criipto-verify-extension:dnsNameCandidate');
+      console.log("Stored value can be read back?", domainAvailable.nameCandidate === readback);
+    }
+    return dispatch(login(returnUrl));
   };
 }
 

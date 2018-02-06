@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { tryToJS } from '../dsl';
 import VerifyApplication from '../containers/VerifyApplication';
 import CheckDomainForm from './CheckDomainForm';
+import './Styles.css';
 
 class VerifyDomain extends Component {
     static propTypes = {

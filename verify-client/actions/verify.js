@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as constants from '../constants';
 import _ from 'lodash'; 
-import { localLogout, login } from './auth';
+import { localLogout, login, renewAuth } from './auth';
 import { toJS } from 'immutable';
 import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyRealm, verifyApplication, defaultVerifyDnsName, tryToJS} from '../dsl'
 import { findConnections } from './connection'
@@ -56,6 +56,14 @@ function fetchVerifyLinks() {
   };
   
 export function fetchCore() {
+    var dnsName = defaultVerifyDnsName();
+    var stored = localStorage.getItem('criipto-verify-extension:dnsNameCandidate');
+    if (stored) {
+        console.log("Found stored DNS domain", stored);
+        dnsName = stored;
+        localStorage.removeItem('criipto-verify-extension:dnsNameCandidate');        
+    }
+
     return (dispatch) => { 
         dispatch( {
             type: "FETCH_CORE",
@@ -64,11 +72,11 @@ export function fetchCore() {
                     dispatch(fetchVerifyTenants()),
                     dispatch(fetchVerifyLinks())
                 ]).then((resolved) => { 
-                    return dispatch(checkDomainAvailable(defaultVerifyDnsName()))
+                    return dispatch(checkDomainAvailable(dnsName))
                 }).then((resolved) => {
                     return dispatch(fetchRegisteredTenants())
                 }).then(resolved => {
-                    return dispatch(fetchExistingVerifyDomains(defaultVerifyDnsName()))
+                    return dispatch(fetchExistingVerifyDomains(dnsName))
                 }).then((resolved) => {
                     return Promise.all([
                         dispatch(fetchClients()),
@@ -100,19 +108,18 @@ export function checkDomainAvailable(dnsName) {
                     payload:
                         { existingDomain: domainCandidate }
                 });
-                dispatch({
+                return dispatch({
                     type: constants.CHECK_VERIFY_DOMAIN_AVAILABLE_FULFILLED,
                     payload:
                         { available: true, nameCandidate: dnsName }
                 });
-                return;
             }
         }
 
         var linkTemplates = state.verifyLinks.get('linkTemplates').toJS();
         var dnsAvailableLink = _.find(linkTemplates, {'rel' : 'easyid:dns-available'});
         var dnsAvailableResource = dnsAvailableLink.href.replace(/{domain}/, dnsName);
-        dispatch({
+        return dispatch({
             type: constants.CHECK_VERIFY_DOMAIN_AVAILABLE,
             payload: {
                 promise: 
@@ -148,7 +155,7 @@ export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
                             }
                     })
                     .then(() => { return dispatch(localLogout()); })
-                    .then(() => { return dispatch(login('/verify')); })
+                    .then(() => { return dispatch(renewAuth('/verify')); })
                 }
             }
         )
@@ -331,7 +338,7 @@ export function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLink
                     ).then(getPayload)
                     .then(() => {
                         return dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
-                    })
+                    }).then(() => dispatch(fetchRegisteredTenants()))
             }
         })
     }

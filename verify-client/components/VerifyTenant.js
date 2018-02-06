@@ -4,6 +4,7 @@ import {createVerifyTenant, checkDomainAvailable, enrollVerifyDomain} from '../a
 import VerifyDomain from './VerifyDomain';
 import CheckDomainForm from './CheckDomainForm';
 import {tryToJS} from '../dsl';
+import './Styles.css';
 
 class VerifyTenant extends Component {
   static propTypes = {
@@ -18,6 +19,7 @@ class VerifyTenant extends Component {
 
   constructor(props) {
     super(props);
+    this.state = { creatingTenant: false };
     this.createTenant = this.createTenant.bind(this);
     this.checkAvailability = this.checkAvailability.bind(this);
   }
@@ -28,7 +30,7 @@ class VerifyTenant extends Component {
 
   componentDidUpdate(prevProps) {
     // Detect when an available domain has been found and Gauss tenant did not get registered properly in Verify
-    if (prevProps.domainStatus && !prevProps.domainStatus.available
+    if ((!prevProps.domainStatus || !prevProps.domainStatus.available)
         && this.props.domainStatus && this.props.domainStatus.available
         && this.props.tenants 
         && this.props.tenants.length > 0) {
@@ -41,10 +43,11 @@ class VerifyTenant extends Component {
 }
 
 createTenant = () => {
-    this.props.createVerifyTenant(
-      this.props.user, 
-      this.props.verifyLinks,
-      this.props.verifyLinkTemplates);
+  this.setState({ creatingTenant: true });
+  this.props.createVerifyTenant(
+    this.props.user, 
+    this.props.verifyLinks,
+    this.props.verifyLinkTemplates);
   }
 
   render() {
@@ -57,13 +60,13 @@ createTenant = () => {
     } else if (this.props.domainStatus && !this.props.domainStatus.available) {
       return (
           <section className="form-group">
-              <p>
-                  Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
-              <p>
-                  Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
-                  We'll need your assistance with selecting a new one of your liking:
-              </p>
-              <CheckDomainForm onCheck={this.checkAvailability}/>
+            <p>
+                Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
+            <p>
+                Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
+                We'll need your assistance with selecting a new one of your liking:
+            </p>
+            <CheckDomainForm onCheck={this.checkAvailability}/>
           </section>
       );
     } else if (this.props.existingTenant && this.props.existingTenant.entityIdentifier) {
@@ -78,10 +81,15 @@ createTenant = () => {
         </section>     
       );
     } else {
+      var activeElement = 
+        this.state.creatingTenant ? 
+          <div className="loader"></div>
+          : <button className="btn btn-default" onClick={this.createTenant}>
+              Create one
+            </button>;
+
       return (
-        <span>No Criipto Verify tenant found &nbsp;
-            <button className="btn btn-default" onClick={this.createTenant}>Create one</button>
-        </span>
+        <span>No Criipto Verify tenant found &nbsp;{activeElement}</span>
       );
     }
   } 
