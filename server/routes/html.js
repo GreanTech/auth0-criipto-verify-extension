@@ -63,6 +63,7 @@ export default (storage) => {
         GAUSS_API_ROOT: 'https://' + config("GAUSS_DOMAIN"),
         VERIFY_GAUSS_APP_ID : config('VERIFY_GAUSS_APP_ID'),
         AUTH0_DOMAIN: config("AUTH0_DOMAIN"),
+        AUTH0_MANAGEMENT_DOMAIN: config("AUTH0_MANAGEMENT_DOMAIN"),
         CRIIPTO_VERIFY_TLD: config('CRIIPTO_VERIFY_TLD'),
         CRIIPTO_VERIFY_AUTHMETHOD_NAME: idServiceProfile.displayName,
         CRIIPTO_VERIFY_AUTHMETHOD_LOGO: idServiceProfile.logo,

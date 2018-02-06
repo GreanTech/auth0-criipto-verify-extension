@@ -7,6 +7,7 @@ import tools from 'auth0-extension-tools';
 import config from '../lib/config';
 
 import connections from './connections';
+import clients from './clients';
 
 export default (storage) => {
   const managementApiClient = middlewares.managementApiClient({
@@ -36,6 +37,7 @@ export default (storage) => {
   });
 
   api.use('/connections', managementApiClient, connections(storage));
+  api.use('/clients', managementApiClient, clients());
 
   return api;
 }

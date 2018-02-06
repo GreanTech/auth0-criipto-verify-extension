@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 import Section from './Section';
 import Footer from './Footer';
 import {fetchCore} from '../actions/verify'
-import {fetchConnections} from '../actions/connection'
 
 class Home extends Component {
   static propTypes = {
     fetchCore: PropTypes.func.isRequired,
-    fetchConnections: PropTypes.func.isRequired
   }
   
   constructor(props){
@@ -17,14 +15,12 @@ class Home extends Component {
 
   componentDidMount() {
     this.props.fetchCore();
-    this.props.fetchConnections();
   }
 
   render() {
     return (
       <div>
         <Section/>
-        <hr />
         <Footer/>
       </div>
     )
@@ -32,6 +28,6 @@ class Home extends Component {
 }
 
 const mapState = ({verifyLinks, verifyTenants, connections}) => ({verifyLinks, verifyTenants, connections});
-const mapDispatch = {fetchCore, fetchConnections};
+const mapDispatch = {fetchCore};
 
 export default connect(mapState, mapDispatch)(Home);

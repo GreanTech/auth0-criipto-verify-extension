@@ -11,7 +11,8 @@ const defaultValues = {
   "GAUSS_DOMAIN": "grean-api.greantech.com",
   // "AUTH0_TOKEN_ISSUER": "https://grean.auth0.com/",
   // "AUTH0_ISSUER_DOMAIN": "grean.auth0.com",
-  "AUTH0_RTA": "auth0.auth0.com"  
+  "AUTH0_RTA": "auth0.auth0.com",
+  "AUTH0_MANAGEMENT_DOMAIN": "manage.auth0.com"
 }
 
 const daeConfig = function(key) {

@@ -5,6 +5,7 @@ import { routerReducer } from 'react-router-redux';
 import { verifyTenants, verifyLinks, verifyDomains, verifyApplications, checkDomainAvailable } from './verify'
 import { auth } from './auth';
 import { connections } from './connections';
+import { clients } from './clients';
 
 function lastAction(state = null, action) {
     return action;
@@ -18,6 +19,7 @@ const state = {
   checkDomainAvailable,
   verifyDomains,
   verifyApplications,
+  clients,
   connections,
   lastAction,
   form: formReducer

@@ -44,7 +44,7 @@ module.exports = (cfg, storageProvider) => {
     clientName: 'Criipto Verify Administration',
     urlPrefix: '/admins',
     sessionStorageKey: 'delegated-admin:apiToken',
-    scopes: 'read:connections create:connections'
+    scopes: 'read:connections create:connections update:connections read:clients'
   }));
 
   app.use('/api', api(storage));

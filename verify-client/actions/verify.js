@@ -4,6 +4,8 @@ import _ from 'lodash';
 import { localLogout, login } from './auth';
 import { toJS } from 'immutable';
 import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyRealm, verifyApplication, defaultVerifyDnsName, tryToJS} from '../dsl'
+import { findConnections } from './connection'
+import { fetchClients } from './client'
 
 const getScopedClaims = (scopedClaimsLink) => {
     // User may already have onboarded before
@@ -67,11 +69,24 @@ export function fetchCore() {
                     return dispatch(fetchRegisteredTenants())
                 }).then(resolved => {
                     return dispatch(fetchExistingVerifyDomains(defaultVerifyDnsName()))
+                }).then((resolved) => {
+                    return Promise.all([
+                        dispatch(fetchClients()),
+                        dispatch(findAuth0Connections())
+                    ])
                 })
             }
         })
     }
 }
+
+function findAuth0Connections() {
+    return (dispatch, getState) => {
+        var state = getState();
+        var registeredTenants = state.verifyTenants.get('registeredTenants').toJS();
+        dispatch(findConnections(registeredTenants));
+    }
+};
 
 export function checkDomainAvailable(dnsName) {
     return (dispatch, getState) => {
