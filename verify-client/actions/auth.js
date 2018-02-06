@@ -28,12 +28,8 @@ export function renewAuth(returnUrl) {
   return (dispatch, getState) => {
     var state = getState();
     var domainAvailable = tryToJS(state.checkDomainAvailable.get('domainStatus'));
-    console.log("domainAvailable", domainAvailable);
     if (domainAvailable && domainAvailable.available) {
-      console.log("Stored available DNS domain in localStorage", domainAvailable.nameCandidate);
-      localStorage.setItem('criipto-verify-extension:dnsNameCandidate', domainAvailable.nameCandidate);
-      var readback = localStorage.getItem('criipto-verify-extension:dnsNameCandidate');
-      console.log("Stored value can be read back?", domainAvailable.nameCandidate === readback);
+      sessionStorage.setItem('criipto-verify-extension:dnsNameCandidate', domainAvailable.nameCandidate);
     }
     return dispatch(login(returnUrl));
   };

@@ -57,11 +57,10 @@ function fetchVerifyLinks() {
   
 export function fetchCore() {
     var dnsName = defaultVerifyDnsName();
-    var stored = localStorage.getItem('criipto-verify-extension:dnsNameCandidate');
+    var stored = sessionStorage.getItem('criipto-verify-extension:dnsNameCandidate');
     if (stored) {
-        console.log("Found stored DNS domain", stored);
         dnsName = stored;
-        localStorage.removeItem('criipto-verify-extension:dnsNameCandidate');        
+        sessionStorage.removeItem('criipto-verify-extension:dnsNameCandidate');        
     }
 
     return (dispatch) => { 
