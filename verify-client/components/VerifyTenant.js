@@ -57,6 +57,17 @@ createTenant = () => {
       return (<span>Hang on while we refresh your login session</span>);
     } else if (!this.props.domainStatus) {
       return (<span>Checking for availability of Criipto Verify DNS domain</span>);
+    } else if (this.props.existingTenant && this.props.existingTenant.entityIdentifier) {
+      return (
+        <section>
+          <p>
+            <span>
+              OK, existing Criipto Verify tenant found: {this.props.existingTenant.name}
+            </span>
+            </p>
+          <VerifyDomain/>
+        </section>     
+      );
     } else if (this.props.domainStatus && !this.props.domainStatus.available) {
       return (
           <section className="form-group">
@@ -68,17 +79,6 @@ createTenant = () => {
             </p>
             <CheckDomainForm onCheck={this.checkAvailability}/>
           </section>
-      );
-    } else if (this.props.existingTenant && this.props.existingTenant.entityIdentifier) {
-      return (
-        <section>
-          <p>
-            <span>
-              OK, existing Criipto Verify tenant found: {this.props.existingTenant.name}
-            </span>
-            </p>
-          <VerifyDomain/>
-        </section>     
       );
     } else {
       var activeElement = 

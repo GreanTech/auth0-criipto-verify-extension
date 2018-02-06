@@ -75,7 +75,7 @@ export function fetchCore() {
                 }).then((resolved) => {
                     return dispatch(fetchRegisteredTenants())
                 }).then(resolved => {
-                    return dispatch(fetchExistingVerifyDomains(dnsName))
+                    return dispatch(fetchExistingVerifyDomains())
                 }).then((resolved) => {
                     return Promise.all([
                         dispatch(fetchClients()),
@@ -176,12 +176,12 @@ const filterDomainsByDnsName = (domains, dnsName) => {
     return existingDomain;
 };
 
-function fetchExistingVerifyDomains(dnsName) {
+function fetchExistingVerifyDomains() {
     return (dispatch, getState) => {
         var state = getState();
         var existingTenant = state.verifyTenants.get('existingTenant').toJS();
         var verifyLinkTemplates = state.verifyLinks.get('linkTemplates').toJS();
-        dispatch(fetchVerifyDomain(existingTenant, verifyLinkTemplates, dnsName));
+        dispatch(fetchVerifyDomain(existingTenant, verifyLinkTemplates));
     }
 };
 
@@ -230,7 +230,7 @@ function fetchRegisteredTenants() {
               var eid = registeredTenantCandidate.entityId;
               var gaussTenant = _.find(gaussTenants, t => t.organization.entityIdentifier === eid);
               existingTenant = gaussTenant.organization;
-              var existingDomain = filterDomainsByDnsName(registeredTenantCandidate.domains, defaultVerifyDnsName());
+              var existingDomain = _.first(registeredTenantCandidate.domains);
               if (existingDomain) {
                   dispatch({
                       type: constants.FETCH_VERIFY_DOMAINS_FULFILLED,
@@ -251,14 +251,14 @@ function fetchRegisteredTenants() {
     }
 };
 
-function fetchVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName) {
+function fetchVerifyDomain(verifyTenant, verifyLinkTemplates) {
     return {
-        type: constants.MERGE_VERIFY_DOMAINS,
+        type: constants.FETCH_VERIFY_DOMAINS,
         payload: {
             promise:
                 fetchVerifyTenantDomains(verifyTenant, verifyLinkTemplates)
                     .then(tenantDomains => {
-                        var candidate = filterDomainsByDnsName(tenantDomains.domains, dnsName);
+                        var candidate = _.first(tenantDomains.domains);
                         return { existingDomain: candidate };
                     })
                     .catch(error => {
