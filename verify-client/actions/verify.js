@@ -260,7 +260,6 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
             payload: {
                 promise:
                     fetchVerifyTenantDomains(verifyTenant, verifyLinkTemplates)
-                        .then(getPayload)
                         .then(tenantDomains => {
                             var candidate = filterDomainsByDnsName(tenantDomains.domains, dnsName);
                             if (!candidate) 
