@@ -24,12 +24,12 @@ export const verifyTenants = createReducer(fromJS(initialStateTenants), { // esl
       loading: false,
       error: `An error occured while loading the Criipto Verify tenants: ${action.errorMessage}`
     }),
-  [constants.FETCH_VERIFY_TENANTS_FULFILLED]: (state, action) => {
-    return state.merge({
+  [constants.FETCH_VERIFY_TENANTS_FULFILLED]: (state, action) =>
+    state.merge({
       loading: false,
       error: null,
       tenants: fromJS(action.payload)
-    })},
+    }),
   [constants.FETCH_REGISTERED_TENANTS_FULFILLED]: (state, action) => {
     var pl = action.payload;
     return state.merge({
@@ -55,12 +55,12 @@ export const checkDomainAvailable = createReducer(fromJS(initialStateDefaultDoma
       loading: false,
       error: `An error occured while checking if a Criipto Verify DNS domain is available: ${action.errorMessage}`
     }),
-  [constants.CHECK_VERIFY_DOMAIN_AVAILABLE_FULFILLED]: (state, action) => {
-    return state.merge({
+  [constants.CHECK_VERIFY_DOMAIN_AVAILABLE_FULFILLED]: (state, action) =>
+    state.merge({
       loading: false,
       error: null,
       domainStatus: fromJS(action.payload)
-    })}
+    })
 });
 
 let initialStateVerifyDomains = {

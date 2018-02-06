@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { mergeVerifyDomain, checkDomainAvailable } from '../actions/verify';
 import _ from 'lodash';
-import { tryToJS, defaultVerifyDnsName } from '../dsl';
+import { tryToJS } from '../dsl';
 import VerifyApplication from '../containers/VerifyApplication';
 import CheckDomainForm from './CheckDomainForm';
 
@@ -36,7 +36,7 @@ class VerifyDomain extends Component {
                 this.props.existingTenant,
                 this.props.verifyLinkTemplates,
                 this.props.verifyLinks,                
-                defaultVerifyDnsName());
+                this.props.domainStatus.nameCandidate);
         }
     }
 

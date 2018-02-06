@@ -17,7 +17,7 @@ export const withTenantId = (templateHref, verifyTenant) => {
 }
 
 export const tryToJS = (candidate) => {
-    return candidate ? candidate.toJS() : null;
+    return candidate ? candidate.toJS() : candidate;
 }
 
 const auth0TenantName = () => {

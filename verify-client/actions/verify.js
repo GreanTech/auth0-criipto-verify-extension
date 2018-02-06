@@ -98,7 +98,12 @@ export function checkDomainAvailable(dnsName) {
                 dispatch({
                     type: constants.FETCH_VERIFY_DOMAINS_FULFILLED,
                     payload:
-                        { existingDomain: domainCandidate }                        
+                        { existingDomain: domainCandidate }
+                });
+                dispatch({
+                    type: constants.CHECK_VERIFY_DOMAIN_AVAILABLE_FULFILLED,
+                    payload:
+                        { available: true, nameCandidate: dnsName }
                 });
                 return;
             }
@@ -302,7 +307,7 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
     }
 };
 
-function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
+export function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
     var enrollLink = _.find(verifyLinks, { 'rel': 'easyid:enrollment' });
     var cfg = window.config;
     var payload = {

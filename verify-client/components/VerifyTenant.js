@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import {connect} from 'react-redux';
-import {createVerifyTenant} from '../actions/verify';
+import {createVerifyTenant, checkDomainAvailable, enrollVerifyDomain} from '../actions/verify';
 import VerifyDomain from './VerifyDomain';
+import CheckDomainForm from './CheckDomainForm';
 import {tryToJS} from '../dsl';
 
 class VerifyTenant extends Component {
@@ -10,15 +11,36 @@ class VerifyTenant extends Component {
     tenantsLoading: PropTypes.bool.isRequired,
     createVerifyTenant : PropTypes.func.isRequired,
     existingTenant: PropTypes.object.isRequired,
-    renewingAuthentication: PropTypes.bool.isRequired
+    renewingAuthentication: PropTypes.bool.isRequired,
+    enrollVerifyDomain: PropTypes.func.isRequired,
+    domainStatus: PropTypes.object
   };
 
   constructor(props) {
     super(props);
     this.createTenant = this.createTenant.bind(this);
+    this.checkAvailability = this.checkAvailability.bind(this);
   }
 
-  createTenant = () => {
+  checkAvailability = (candidate) => {
+    this.props.checkDomainAvailable(candidate);
+  }
+
+  componentDidUpdate(prevProps) {
+    // Detect when an available domain has been found and Gauss tenant did not get registered properly in Verify
+    if (prevProps.domainStatus && !prevProps.domainStatus.available
+        && this.props.domainStatus && this.props.domainStatus.available
+        && this.props.tenants 
+        && this.props.tenants.length > 0) {
+        this.props.enrollVerifyDomain(
+            _.first(this.props.tenants).organization,
+            this.props.verifyLinkTemplates,
+            this.props.verifyLinks,                
+            this.props.domainStatus.nameCandidate);
+    }        
+}
+
+createTenant = () => {
     this.props.createVerifyTenant(
       this.props.user, 
       this.props.verifyLinks,
@@ -30,6 +52,20 @@ class VerifyTenant extends Component {
       return (<span>Checking for existing Criipto Verify tenants</span>);
     } else if (this.props.renewingAuthentication) {
       return (<span>Hang on while we refresh your login session</span>);
+    } else if (!this.props.domainStatus) {
+      return (<span>Checking for availability of Criipto Verify DNS domain</span>);
+    } else if (this.props.domainStatus && !this.props.domainStatus.available) {
+      return (
+          <section className="form-group">
+              <p>
+                  Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
+              <p>
+                  Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
+                  We'll need your assistance with selecting a new one of your liking:
+              </p>
+              <CheckDomainForm onCheck={this.checkAvailability}/>
+          </section>
+      );
     } else if (this.props.existingTenant && this.props.existingTenant.entityIdentifier) {
       return (
         <section>
@@ -58,9 +94,11 @@ function mapStateToProps(state) {
     verifyLinkTemplates: tryToJS(state.verifyLinks.get('linkTemplates')),
     tenantsLoading: state.verifyTenants.get('loading'),
     existingTenant: state.verifyTenants.get('existingTenant').toJS(),
-    renewingAuthentication: state.auth.get('renewingAuthentication')
+    tenants: state.verifyTenants.get('tenants').toJS(),
+    renewingAuthentication: state.auth.get('renewingAuthentication'),
+    domainStatus: tryToJS(state.checkDomainAvailable.get('domainStatus'))
   };
 };
 
-const mapDispatch = {createVerifyTenant}
+const mapDispatch = {checkDomainAvailable, enrollVerifyDomain, createVerifyTenant}
 export default connect(mapStateToProps, mapDispatch)(VerifyTenant);
