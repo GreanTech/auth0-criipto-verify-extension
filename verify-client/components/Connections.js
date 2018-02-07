@@ -1,38 +1,84 @@
 import React, { Component, PropTypes } from 'react';
+import {connect} from 'react-redux';
 import _ from 'lodash';
 import Connection from './Connection';
+import { toJS } from 'immutable';
+import { updateConnection, createConnections } from '../actions/connection';
+import { tryToJS } from '../dsl';
 
-const Connections = ({connections, clients, updateConnection}) => {
-    var cs = _.filter(connections, c => !!c);
-    if (!cs) {
-        return (
-            <span>No Auth0 connection to your Criipto Verify tenant found &nbsp;
-                <button className="btn btn-default" onClick={this.createAuth0Connection}>Create one</button>
-            </span>
-          );
+class Connections extends Component {
+    static propTypes = {
+        connections: PropTypes.array,
+        clients: PropTypes.array,
+        updateConnection: PropTypes.func.isRequired,
+        createConnections: PropTypes.func.isRequired,
+        existingDomain: PropTypes.object,
+        creating: PropTypes.bool.isRequired
+    };
+
+    constructor(props) {
+        super(props);
     }
 
-    return (
-        <section>
-            <h4>Existing Auth0 connections to Criipto Verify</h4>
-            { 
-                <div className="col-xs-5">
-                    {
-                        _.map(cs, connection => 
-                            <Connection key={connection.id} 
-                                connection={connection} clients={clients}
-                                onSubmit={updateConnection}/>)
-                    } 
-                </div>
-            }
-        </section>
-    );
+    componentDidUpdate(prevProps) {
+        if (prevProps.creating || this.props.creating 
+            || !this.props.existingDomain
+            || !this.props.connections) {
+            return;
+        }
+
+        var expectedConnections = 
+            _.map(window.config.CRIIPTO_VERIFY_AUTHMETHODS, am => {
+                var encodedAuthMethod = window.btoa(am);
+                var connectionName = am.replace(/^urn:grn:authn:/, '').replace(/:/g, '-');
+                return {
+                    name: connectionName,
+                    options: {
+                        adfs_server: `https://${this.props.existingDomain.name}/${encodedAuthMethod}/FederationMetadata/2007-06/FederationMetadata.xml`
+                    }
+                };
+            });
+        var missingConnections = _.reject(expectedConnections, ec =>
+            _.filter(this.props.connections, ec)
+        );
+
+        var connectionsAreMissing = missingConnections.length > 0;
+        if (connectionsAreMissing)
+        {
+            this.props.createConnections(missingConnections);
+        }
+    }
+    
+    render() {
+        var cs = _.filter(this.props.connections, c => !!c);
+        if (!cs || cs.length === 0) {
+            return (<div></div>);
+        }
+
+        return (
+            <section>
+                <h4>Existing Auth0 connections to Criipto Verify</h4>
+                { 
+                    <div className="col-xs-5">
+                        {
+                            _.map(cs, connection => 
+                                <Connection key={connection.id} 
+                                    connection={connection} clients={this.props.clients}
+                                    onSubmit={this.props.updateConnection}/>)
+                        } 
+                    </div>
+                }
+            </section>
+        );
+    }
 };
 
-Connections.propTypes = {
-    connections: PropTypes.array.isRequired,
-    clients: PropTypes.array.isRequired,
-    updateConnection: PropTypes.func.isRequired
-}
+const mapStateToProps = (state) => ({
+    connections: tryToJS(state.connections.get('records')),
+    clients: tryToJS(state.clients.get('clients')),
+    existingDomain: tryToJS(state.verifyDomains.get('existingDomain')),
+    creating: state.connections.get('creating')
+});
 
-export default Connections;
+const mapDispatchToProps = {updateConnection, createConnections}
+export default connect(mapStateToProps, mapDispatchToProps)(Connections);

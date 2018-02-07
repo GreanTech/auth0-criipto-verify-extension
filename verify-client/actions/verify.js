@@ -302,11 +302,15 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
                             var message = (error.response.data || {}).message || '';
                             if(message.indexOf(verifyTenantId(verifyTenant)) > 0
                                 && message.indexOf('is not registered') > 0 ) {
-                                dispatch(enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
+                                return dispatch(enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
                             }
                             else {
                                 throw error;
                             }
+                        })
+                        .then(r => {
+                            dispatch(fetchRegisteredTenants());
+                            return r;
                         })
             }
         })

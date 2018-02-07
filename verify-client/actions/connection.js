@@ -14,7 +14,7 @@ export function findConnections(registeredTenants) {
     return {
         type: constants.FETCH_CONNECTIONS,
         payload: {
-            promise: axios.post('/api/connections',
+            promise: axios.post('/api/connections/search',
                 { registeredTenants : registeredTenants },
                 requestConfig()
             )            
@@ -31,5 +31,23 @@ export function updateConnection(connection) {
                 requestConfig()
             )
         }
+    }
+}
+
+export function createConnections(connections) {
+    return (dispatch, getState) => {
+        var state = getState();
+        var registeredTenants = state.verifyTenants.get('registeredTenants').toJS();
+        dispatch({
+            type: constants.CREATE_CONNECTIONS,
+            payload: {
+                promise: Promise.all(
+                    _.map(connections, connection => 
+                        axios.post('/api/connections',
+                            connection,
+                            requestConfig()))
+                ).then(dispatch(findConnections(registeredTenants)))
+            }
+        })
     }
 }

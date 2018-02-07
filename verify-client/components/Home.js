@@ -27,7 +27,6 @@ class Home extends Component {
   }
 }
 
-const mapState = ({verifyLinks, verifyTenants, connections}) => ({verifyLinks, verifyTenants, connections});
 const mapDispatch = {fetchCore};
 
-export default connect(mapState, mapDispatch)(Home);
+export default connect(null, mapDispatch)(Home);
