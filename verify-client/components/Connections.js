@@ -23,14 +23,14 @@ class Connections extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps.creating || this.props.creating 
             || !this.props.existingDomain
-            || !this.props.connections) {
+            || this.props.connections === null) {
             return;
         }
 
         var expectedConnections = 
             _.map(window.config.CRIIPTO_VERIFY_AUTHMETHODS, am => {
                 var encodedAuthMethod = window.btoa(am);
-                var connectionName = am.replace(/^urn:grn:authn:/, '').replace(/:/g, '-');
+                var connectionName = am.replace(/^urn:grn:authn:/, 'criipto-verify-').replace(/:/g, '-');
                 return {
                     name: connectionName,
                     options: {
@@ -38,9 +38,12 @@ class Connections extends Component {
                     }
                 };
             });
-        var missingConnections = _.reject(expectedConnections, ec =>
-            _.filter(this.props.connections, ec)
-        );
+        var missingConnections = 
+            _.isEmpty(this.props.connections) ?
+                expectedConnections
+                :    _.reject(expectedConnections, ec =>
+                        _.filter(this.props.connections, ec))
+            ;
 
         var connectionsAreMissing = missingConnections.length > 0;
         if (connectionsAreMissing)

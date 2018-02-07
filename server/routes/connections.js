@@ -4,7 +4,7 @@ import url from 'url';
 
 export default (storage) => {
   const api = Router();
-  api.post('/', (req, res, next) => {
+  api.post('/search', (req, res, next) => {
     var registeredTenants = req.body.registeredTenants;
     var allDomains = 
       _.flatten(_.map(registeredTenants, registeredTenant => 
@@ -30,6 +30,13 @@ export default (storage) => {
         { id: req.params.id }, 
         { enabled_clients : req.body.enabled_clients }
       ).then(() => res.status(204).send())
+      .catch(next);
+  });
+
+  api.post('/', (req, res, next) => {
+    var payload = _.assign({}, req.body, {strategy: 'adfs'});
+    req.auth0.connections.create(payload)
+      .then(() => res.status(204).send())
       .catch(next);
   });
 
