@@ -23,7 +23,7 @@ module.exports = {
         },
         'auth0-criipto-verify-admin-no-bankid': {
             'displayName': "Norwegian BankID",
-            'logo': 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/logos/nobankid/bankID_Negativ_Blaabakgrunn_Logo_RGB.png',
+            'logo': 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/logos/nobankid/bankID_Negativ_Blaabakgrunn_Logo_RGB.svg',
             'acrValues': [
                 "urn:grn:authn:no:bankid:central",
                 "urn:grn:authn:no:bankid:mobile",
