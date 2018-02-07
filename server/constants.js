@@ -2,7 +2,7 @@ module.exports = {
     ID_SERVICE_PROFILES: {
         'auth0-criipto-verify-admin-dk-nemid': {
             'displayName': "Danish NemID",
-            'logo': 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/logos/dknemid/logo_nemid_white_on_black.png',
+            'logo': 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/logos/dknemid/NEMID_BLACK.svg',
             'acrValues': [
                 "urn:grn:authn:dk:nemid:poces",
                 "urn:grn:authn:dk:nemid:moces",
