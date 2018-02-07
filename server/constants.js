@@ -2,7 +2,7 @@ module.exports = {
     ID_SERVICE_PROFILES: {
         'auth0-criipto-verify-admin-dk-nemid': {
             'displayName': "Danish NemID",
-            'logo': 'https://www.criipto.com/images/logo-e-id-dk-nemid.svg',
+            'logo': 'https://github.com/GreanTech/auth0-criipto-verify-extension/blob/master/logos/dknemid/logo_nemid_white_on_black.png',
             'acrValues': [
                 "urn:grn:authn:dk:nemid:poces",
                 "urn:grn:authn:dk:nemid:moces",
@@ -13,7 +13,7 @@ module.exports = {
         },
         'auth0-criipto-verify-admin-se-bankid': {
             'displayName': "Swedish BankID",
-            'logo': 'https://www.criipto.com/images/logo-e-id-se-bankid.svg',
+            'logo': 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/logos/sebankid/bankid_high_rgb.png',
             'acrValues': [
                 "urn:grn:authn:se:bankid:same-device",
                 "urn:grn:authn:se:bankid:another-device"
@@ -23,7 +23,7 @@ module.exports = {
         },
         'auth0-criipto-verify-admin-no-bankid': {
             'displayName': "Norwegian BankID",
-            'logo': 'https://www.criipto.com/images/logo-e-id-no-bankid.svg',
+            'logo': 'https://rawgit.com/GreanTech/auth0-criipto-verify-extension/master/logos/nobankid/bankID_Negativ_Blaabakgrunn_Logo_RGB.png',
             'acrValues': [
                 "urn:grn:authn:no:bankid:central",
                 "urn:grn:authn:no:bankid:mobile",
