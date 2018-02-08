@@ -11,11 +11,17 @@ class Connection extends Component {
 
   constructor(props) {
     super(props);
-    var seed = {};
-    _.forEach(this.props.clients, c => seed[c] = false);
-    _.forEach(this.props.connection.enabled_clients, c => seed[c] = true);
+    var seed = _.reduce(this.props.clients, (acc, client) => { 
+      acc[client.client_id] = false;
+      return acc;
+    }, {});
+    var currentlyEnabled =
+      _.reduce(this.props.connection.enabled_clients, (acc, client_id) => {
+        acc[client_id] = true;
+        return acc;
+      }, seed);
     this.state = { 
-      enabledClients: seed
+      enabledClients: currentlyEnabled
     };
 
     this.isEnabled = this.isEnabled.bind(this);
@@ -27,7 +33,8 @@ class Connection extends Component {
     return this.state.enabledClients[client.client_id];
   }
 
-  toggleEnabled(clientId) {
+  toggleEnabled(e) {
+    var clientId = e.target.value;
     var newState = _.assign({}, this.state);
     newState.enabledClients[clientId] = !this.state.enabledClients[clientId];
     this.setState(newState)
@@ -62,7 +69,7 @@ class Connection extends Component {
                   <tr key={c.client_id}>
                     <td style={{width: '70%'}}>{c.name}</td>
                     <td style={{width: '30%'}}>
-                      <Switchbox key={c.client_id} label={c.client_id} isChecked={this.isEnabled(c)} onChange={this.toggleEnabled} />
+                      <Switchbox key={c.client_id} label={c.client_id} isChecked={!!this.isEnabled(c)} onChange={this.toggleEnabled} />
                     </td>
                   </tr>
               )

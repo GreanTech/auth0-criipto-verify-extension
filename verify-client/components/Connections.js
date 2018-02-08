@@ -55,7 +55,7 @@ class Connections extends Component {
     }
     
     render() {
-        var header = <h5>Manage clients for Auth0 connections to Criipto Verify</h5>;
+        var header = <h5>Manage enabled clients for Auth0 connections to Criipto Verify</h5>;
         if (this.props.error) {
             return (
                 <section>
