@@ -5,6 +5,7 @@ import promiseMiddleware from 'redux-promise-middleware';
 import createLogger from 'redux-logger';
 import DevTools from '../containers/DevTools';
 
+import normalizeErrorMiddleware from '../middlewares/normalizeErrorMiddleware';
 import promiseSuccessMiddleware from '../middlewares/promiseSuccessMiddleware';
 
 export default function configureStore(middlewares, initialState = { }) {
@@ -12,6 +13,7 @@ export default function configureStore(middlewares, initialState = { }) {
       applyMiddleware(
         promiseMiddleware(),
         thunkMiddleware,
+        normalizeErrorMiddleware(),
         promiseSuccessMiddleware(),
         createLogger({
           predicate: () => process.env.NODE_ENV !== 'production'

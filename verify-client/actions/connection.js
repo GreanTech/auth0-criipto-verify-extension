@@ -46,7 +46,9 @@ export function createConnections(connections) {
                         axios.post('/api/connections',
                             connection,
                             requestConfig()))
-                ).then(dispatch(findConnections(registeredTenants)))
+                ).then((resolved) => {
+                    return dispatch(findConnections(registeredTenants))
+                })
             }
         })
     }

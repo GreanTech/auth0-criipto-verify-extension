@@ -55,7 +55,7 @@ function fetchVerifyLinks() {
     }
   };
   
-export function fetchCore() {
+function fetchCoreVerify() {
     var dnsName = defaultVerifyDnsName();
     var stored = sessionStorage.getItem('criipto-verify-extension:dnsNameCandidate');
     if (stored) {
@@ -63,10 +63,10 @@ export function fetchCore() {
         sessionStorage.removeItem('criipto-verify-extension:dnsNameCandidate');        
     }
 
-    return (dispatch) => { 
-        dispatch( {
-            type: "FETCH_CORE",
-            payload : {
+    return (dispatch) => {
+        return dispatch({
+            type: constants.FETCH_CORE_VERIFY,
+            payload: {
                 promise: Promise.all([
                     dispatch(fetchVerifyTenants()),
                     dispatch(fetchVerifyLinks())
@@ -76,12 +76,36 @@ export function fetchCore() {
                     return dispatch(fetchRegisteredTenants())
                 }).then(resolved => {
                     return dispatch(fetchExistingVerifyDomains())
-                }).then((resolved) => {
-                    return Promise.all([
-                        dispatch(fetchClients()),
-                        dispatch(findAuth0Connections())
-                    ])
                 })
+            }
+        })
+    }
+}
+
+function fetchCoreAuth0() {
+    return (dispatch) => {
+        return dispatch({
+            type: constants.FETCH_CORE_AUTH0,
+            payload: {
+                promise: Promise.all([
+                    dispatch(fetchClients()),
+                    dispatch(findAuth0Connections())
+                ])
+            }
+        })
+    }
+}
+
+export function fetchCore() {
+    return (dispatch) => { 
+        dispatch( {
+            type: constants.FETCH_CORE,
+            payload : {
+                promise: 
+                    dispatch(fetchCoreVerify())
+                    .then((resolved) => {
+                        return dispatch(fetchCoreAuth0())
+                    })
             }
         })
     }

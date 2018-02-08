@@ -51,7 +51,7 @@ class Connection extends Component {
     return (
       <form className="form-horizontal" onSubmit={this.handleSubmit}>
         <div>
-          <h5 className="unstyled"><code>{this.props.connection.name}</code></h5>
+          <h5><code>{this.props.connection.name}</code></h5>
           <table className="table data-table enterprise-connections">
             <thead>
               <tr><td>Client</td><td>Enabled</td></tr>

@@ -1,12 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 const VerifyApplication = ({existingApplication}) => (
-    <section>
-        <span>
-            OK, existing Criipto Verify application found:
-            {existingApplication.name}
-        </span>
-    </section>
+    <div>Application name: {existingApplication.name}</div>
 );
 
 VerifyApplication.propTypes = {

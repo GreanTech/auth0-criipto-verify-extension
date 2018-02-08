@@ -23,11 +23,11 @@ class VerifyApplicationContainer extends Component {
 
     render() {
         if (this.props.applicationLoading) {
-            return (<section><span>Checking for existing Criipto Verify application</span></section>);
+            return (<span>Checking for existing Criipto Verify application</span>);
         } else if (this.props.existingApplication) {
             return (<VerifyApplication {...this.props}/>);
         } else {
-            return (<section><span>No Criipto Verify application found - creating one...</span></section>);
+            return (<span>No Criipto Verify application found - creating one...</span>);
         }
     }
 }

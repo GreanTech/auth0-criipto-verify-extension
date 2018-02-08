@@ -5,6 +5,7 @@ import Connection from './Connection';
 import { toJS } from 'immutable';
 import { updateConnection, createConnections } from '../actions/connection';
 import { tryToJS } from '../dsl';
+import { Error } from 'auth0-extension-ui';
 
 class Connections extends Component {
     static propTypes = {
@@ -13,7 +14,8 @@ class Connections extends Component {
         updateConnection: PropTypes.func.isRequired,
         createConnections: PropTypes.func.isRequired,
         existingDomain: PropTypes.object,
-        creating: PropTypes.bool.isRequired
+        creating: PropTypes.bool.isRequired,
+        error: PropTypes.string
     };
 
     constructor(props) {
@@ -53,6 +55,16 @@ class Connections extends Component {
     }
     
     render() {
+        var header = <h5>Manage clients for Auth0 connections to Criipto Verify</h5>;
+        if (this.props.error) {
+            return (
+                <section>
+                   {header}
+                    <Error message={this.props.error} />
+                </section>
+            );
+        }
+        
         var cs = _.filter(this.props.connections, c => !!c);
         if (!cs || cs.length === 0) {
             return (<div></div>);
@@ -60,7 +72,7 @@ class Connections extends Component {
 
         return (
             <section>
-                <h4>Existing Auth0 connections to Criipto Verify</h4>
+                {header}
                 { 
                     <div className="col-xs-5">
                         {
@@ -80,7 +92,8 @@ const mapStateToProps = (state) => ({
     connections: tryToJS(state.connections.get('records')),
     clients: tryToJS(state.clients.get('clients')),
     existingDomain: tryToJS(state.verifyDomains.get('existingDomain')),
-    creating: state.connections.get('creating')
+    creating: state.connections.get('creating'),
+    error: state.connections.get('error'),
 });
 
 const mapDispatchToProps = {updateConnection, createConnections}

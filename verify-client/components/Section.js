@@ -17,15 +17,15 @@ class Section extends Component {
     return (
       <section id="one" className="wrapper style2 special flow">
         <header className="major">
-          <h2>Hi there, {this.props.user.get("name")} (email: {this.props.user.get("email")})</h2>
+          <h3>Hi there, {this.props.user.get("name")} (email: {this.props.user.get("email")})</h3>
         </header>
         <header className="major">
-          <h3><VerifyTenant/></h3>
+          <VerifyTenant/>
         </header>
         <header className="major">
-          <h2>
+          <h3>
             <Connections/>
-          </h2>
+          </h3>
         </header>
       </section>
     );

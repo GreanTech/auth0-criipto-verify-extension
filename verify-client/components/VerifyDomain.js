@@ -61,28 +61,11 @@ class VerifyDomain extends Component {
             return (<span>Checking for existing Criipto Verify DNS domain</span>);
         } else if (this.props.existingDomain) {
             return (
-                <section>
-                    <p>
-                        <span>
-                            OK, existing Criipto Verify DNS domain found:
-                            {this.props.existingDomain.name}
-                        </span>
-                    </p>
+                <div>
+                    DNS domain: {this.props.existingDomain.name}
                     <VerifyApplication/>
-                </section>
-            );
-        } else if (this.props.domainStatus && !this.props.domainStatus.available) {
-            return (
-                <section className="form-group">
-                    <p>
-                        Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
-                    <p>
-                        Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
-                        We'll need your assistance with selecting a new one of your liking:
-                    </p>
-                    <CheckDomainForm onCheck={this.checkAvailability} placeholder={this.props.domainStatus.nameCandidate}/>
-                </section>
-            );
+                </div>
+                );
         } else {
             return (<span>No Criipto Verify DNS domain found - creating one...</span>);
         }
