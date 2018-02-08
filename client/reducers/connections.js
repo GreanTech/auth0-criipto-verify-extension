@@ -25,20 +25,5 @@ export const connections = createReducer(fromJS(initialState), { // eslint-disab
       loading: false,
       error: null,
       records: fromJS(action.payload.data)
-    }),
-  [constants.CREATE_CONNECTIONS_PENDING]: (state) => 
-    state.merge({
-      creating: true,
-      error: null
-    }),
-  [constants.CREATE_CONNECTIONS_REJECTED]: (state) => 
-    state.merge({
-      creating: false,
-      error: `An error occured while creating the connections: ${action.errorMessage}`
-    }),
-  [constants.CREATE_CONNECTIONS_FULFILLED]: (state) => 
-    state.merge({
-      creating: false,
-      error: null
-    }),
+    })
 });
