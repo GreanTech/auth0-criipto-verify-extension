@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { mergeVerifyDomain, checkDomainAvailable } from '../actions/verify';
+import { mergeVerifyDomain } from '../actions/verify';
 import _ from 'lodash';
 import { tryToJS } from '../dsl';
 import VerifyApplication from '../containers/VerifyApplication';
@@ -15,17 +15,11 @@ class VerifyDomain extends Component {
         verifyLinks: PropTypes.array.isRequired,
         verifyLinkTemplates: PropTypes.array.isRequired,
         mergeVerifyDomain: PropTypes.func.isRequired,
-        checkDomainAvailable: PropTypes.func.isRequired,
         existingDomain: PropTypes.object,
     }
 
     constructor(props) {
         super(props);
-        this.checkAvailability = this.checkAvailability.bind(this);
-    }
-
-    checkAvailability = (candidate) => {
-        this.props.checkDomainAvailable(candidate);
     }
 
     componentDidMount() {
@@ -83,5 +77,5 @@ function mapStateToProps(state) {
     };
 };
 
-const mapDispatch = { mergeVerifyDomain, checkDomainAvailable }
+const mapDispatch = { mergeVerifyDomain }
 export default connect(mapStateToProps, mapDispatch)(VerifyDomain);
