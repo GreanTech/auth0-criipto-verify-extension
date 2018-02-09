@@ -10,7 +10,8 @@ let initialStateTenants = {
   error: null,
   tenants: [],
   existingTenant: {},
-  registeredTenants: []  
+  registeredTenants: [],
+  intent: sessionStorage.getItem('criipto-verify:tenant-intent')
 };
 
 const formatError = (action, msgPrefix) => {
@@ -23,6 +24,12 @@ const formatError = (action, msgPrefix) => {
 }
 
 export const verifyTenants = createReducer(fromJS(initialStateTenants), { // eslint-disable-line import/prefer-default-export
+  [constants.VERIFY_TENANT_INTENT]: (state, action) => {
+    var intent = action.payload.intent;
+    sessionStorage.setItem('criipto-verify:tenant-intent', intent);
+    return state.merge({
+      intent: intent
+    })},
   [constants.FETCH_CORE_VERIFY_PENDING]: (state) =>
     state.merge({
       loading: true,

@@ -10,6 +10,7 @@ import { Error } from 'auth0-extension-ui';
 class VerifyTenant extends Component {
   static propTypes = {
     user: PropTypes.object,
+    intent: PropTypes.string,
     tenantsLoading: PropTypes.bool.isRequired,
     error: PropTypes.string,
     createVerifyTenant : PropTypes.func.isRequired,
@@ -30,10 +31,30 @@ class VerifyTenant extends Component {
     this.props.checkDomainAvailable(candidate);
   }
 
+  hasExistingTenant(props) {
+    return props.existingTenant && props.existingTenant.entityIdentifier;
+  }
+
+  isDomainAvailable(props) {
+    return props.domainStatus && props.domainStatus.available;
+  }
+  
   componentDidUpdate(prevProps) {
+    // When core verify data are loaded, no tenant was found, and the user intended
+    // to create one, trigger tenant creation
+    var tenantLoadingJustCompleted = prevProps.tenantsLoading && !this.props.tenantsLoading;
+    if (this.props.intent === 'create'  
+      && tenantLoadingJustCompleted
+      && this.isDomainAvailable(this.props)
+      && !this.hasExistingTenant(this.props)) {
+      this.createTenant();
+    }
+
+    var domainBecameAvailable = 
+      !this.isDomainAvailable(prevProps) 
+      && this.isDomainAvailable(this.props);
     // Detect when an available domain has been found and Gauss tenant did not get registered properly in Verify
-    if ((!prevProps.domainStatus || !prevProps.domainStatus.available)
-        && this.props.domainStatus && this.props.domainStatus.available
+    if (domainBecameAvailable
         && this.props.tenants 
         && this.props.tenants.length > 0) {
         this.props.enrollVerifyDomain(
@@ -41,15 +62,15 @@ class VerifyTenant extends Component {
             this.props.verifyLinkTemplates,
             this.props.verifyLinks,                
             this.props.domainStatus.nameCandidate);
-    }        
-}
+    }
+  }
 
-createTenant = () => {
-  this.setState({ creatingTenant: true });
-  this.props.createVerifyTenant(
-    this.props.user, 
-    this.props.verifyLinks,
-    this.props.verifyLinkTemplates);
+  createTenant = () => {
+    this.setState({ creatingTenant: true });
+    this.props.createVerifyTenant(
+      this.props.user, 
+      this.props.verifyLinks,
+      this.props.verifyLinkTemplates);
   }
 
   render() {
@@ -61,7 +82,7 @@ createTenant = () => {
       return (<span>Hang on while we refresh your login session</span>);
     } else if (!this.props.domainStatus) {
       return (<span>Checking for availability of Criipto Verify DNS domain</span>);
-    } else if (this.props.existingTenant && this.props.existingTenant.entityIdentifier) {
+    } else if (this.hasExistingTenant(this.props)) {
       return (
         <div>
           <h5>Criipto Verify tenant details</h5>
@@ -69,11 +90,11 @@ createTenant = () => {
           <VerifyDomain/>
         </div>     
       );
-    } else if (this.props.domainStatus && !this.props.domainStatus.available) {
+    } else if (!this.isDomainAvailable(this.props)) {
       return (
         <div className='row col-xs-12'>
           <h4>
-            <p>Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
+            <p>Well, isn't that just typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code></p>
             <p>
               Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
               We'll need your assistance with selecting a new one of your liking:
@@ -104,6 +125,7 @@ createTenant = () => {
 function mapStateToProps(state) {
   return {
     user: state.auth.get('user'),
+    intent: state.verifyTenants.get('intent'),
     verifyLinks: tryToJS(state.verifyLinks.get('links')),
     verifyLinkTemplates: tryToJS(state.verifyLinks.get('linkTemplates')),
     tenantsLoading: state.verifyTenants.get('loading'),

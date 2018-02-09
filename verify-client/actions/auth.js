@@ -32,6 +32,7 @@ export function renewAuth(returnUrl) {
     if (domainAvailable && domainAvailable.available) {
       sessionStorage.setItem('criipto-verify-extension:dnsNameCandidate', domainAvailable.nameCandidate);
     }
+    sessionStorage.removeItem('criipto-verify:apiToken');
     return dispatch(login(returnUrl));
   };
 }
