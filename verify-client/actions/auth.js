@@ -40,7 +40,13 @@ export function login(returnUrl) {
   return (dispatch) => {
     var existingToken = sessionStorage.getItem('criipto-verify:apiToken');
     if (existingToken) {
-      return processTokens(dispatch, existingToken, returnUrl)
+      const decodedToken = jwtDecode(existingToken);
+      if (isExpired(decodedToken)) {
+        sessionStorage.removeItem('criipto-verify:apiToken');
+        dispatch({ type: constants.LOGIN_PENDING });
+        return;
+      }          
+      return processTokens(dispatch, existingToken, returnUrl);
     } else {
       sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
 
