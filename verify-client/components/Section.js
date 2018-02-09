@@ -19,14 +19,8 @@ class Section extends Component {
         <header className="major">
           <h3>Hi there, {this.props.user.get("name")} (email: {this.props.user.get("email")})</h3>
         </header>
-        <header className="major">
-          <VerifyTenant/>
-        </header>
-        <header className="major">
-          <h3>
-            <Connections/>
-          </h3>
-        </header>
+        <VerifyTenant/>
+        <Connections/>
       </section>
     );
   }

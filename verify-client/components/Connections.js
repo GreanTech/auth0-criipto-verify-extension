@@ -58,10 +58,10 @@ class Connections extends Component {
         var header = <h5>Manage enabled clients for Auth0 connections to Criipto Verify</h5>;
         if (this.props.error) {
             return (
-                <section>
+                <div className='row'>
                    {header}
                     <Error message={this.props.error} />
-                </section>
+                </div>
             );
         }
         

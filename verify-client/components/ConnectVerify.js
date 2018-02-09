@@ -19,9 +19,8 @@ const ConnectVerify = (props) => {
                                 <p>Welcome to the <code>{window.config.CRIIPTO_VERIFY_AUTHMETHOD_NAME + " via " || ""} Criipto Verify</code> connection wizard!</p>
                                 <p>We will guide you through the process, which starts with a login to <code>Criipto Verify</code></p>
                             </h3>
-                            {/* <h2>Hi there, {this.props.user.get("name")} (email: {this.props.user.get("email")})</h2> */}
                         </header>
-                        <button className="btn btn-default" onClick={onClick}>Log in and get connected</button>
+                        <button className="btn btn-default" onClick={onClick}>Create Criipto Verify account</button>
                     </section>
                 </div>
             </section>

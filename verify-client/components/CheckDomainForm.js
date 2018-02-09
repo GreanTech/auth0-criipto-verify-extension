@@ -20,7 +20,7 @@ class CheckDomainForm extends React.Component {
         var tld = window.config.CRIIPTO_VERIFY_TLD;
         var placeholder = `<YOUR DESIRED PREFIX>.${tld}`;
         return (
-            <div>
+            <div className="form-group">
                 <form onSubmit={this.handleSubmit} className="form-horizontal col-xs-9">
                     <div className="form-group">
                         <div className="col-xs-4">

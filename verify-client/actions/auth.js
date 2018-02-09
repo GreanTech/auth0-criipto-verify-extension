@@ -11,6 +11,7 @@ const issuer = window.config.CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER || `https://${win
 const webAuth = new auth0.WebAuth({ // eslint-disable-line no-undef
   domain: window.config.CRIIPTO_VERIFY_AUTH0_DOMAIN,
   clientID: window.config.CRIIPTO_VERIFY_CLIENT_ID,
+  popupOrigin: window.config.BASE_URL,
   overrides: {
     __tenant: issuer.substr(8).split('.')[0],
     __token_issuer: issuer
@@ -36,13 +37,34 @@ export function renewAuth(returnUrl) {
 }
 
 export function login(returnUrl) {
-  sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
+  return (dispatch) => {
+    var existingToken = sessionStorage.getItem('criipto-verify:apiToken');
+    if (existingToken) {
+      return processTokens(dispatch, existingToken, returnUrl)
+    } else {
+      sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
 
-  webAuth.authorize(authorizeOptions);
+      window.addEventListener('message', e => {
+        console.log('got postMessage event', e);
+      });
 
-  return {
-    type: constants.SHOW_LOGIN
-  };
+      return new Promise(function(resolve, reject) {
+        webAuth.popup.authorize(authorizeOptions, function(err, authResult) {
+          if (err) {
+            dispatch({ type: constants.LOGIN_FAILED, payload: err });
+            reject(err);
+          } else if (authResult) {
+            const returnTo = popReturnTo();
+            return resolve(processTokens(dispatch, authResult.idToken, returnTo));
+          } else {
+            err = "Neither error or authResult returned by popup.";
+            dispatch({ type: constants.LOGIN_FAILED, payload: err });
+            reject(err)
+          }
+        });
+      });
+    }
+  }
 }
 
 function isExpired(decodedToken) {
@@ -112,6 +134,12 @@ const processTokens = (dispatch, apiToken, returnTo) => {
   }
 };
 
+const popReturnTo = () => {
+  const returnTo = sessionStorage.getItem('criipto-verify-extension:returnTo');
+  sessionStorage.removeItem('criipto-verify-extension:returnTo');
+  return returnTo;
+};
+
 export function loadCredentials() {
   return (dispatch, getState) => {
     var state = getState();
@@ -121,34 +149,38 @@ export function loadCredentials() {
 
     const token = sessionStorage.getItem('criipto-verify:apiToken');
     if (token || window.location.hash) {
-
       if (window.location.hash) {
         dispatch({
           type: constants.LOGIN_PENDING
         });
 
-        return webAuth.parseHash({
-          hash: window.location.hash
-        }, (err, hash) => {
-          if (err || !hash || !hash.idToken) {
-            /* Must have had hash, but didn't get an idToken in the hash */
-            console.error('login error: ', err);;
-            return dispatch({
-              type: constants.LOGIN_FAILED,
-              payload: {
-                error: err && err.error ? `${err.error}: ${err.errorDescription}` : 'UnknownError: Unknown Error'
-              }
-            });
-          }
+        if (window.opener) {
+          // popup mode (most likely, at least), tell the popup to notify
+          // opener window and close itself
+          webAuth.popup.callback();
+        } else {
+          return webAuth.parseHash({
+            hash: window.location.hash
+          }, (err, hash) => {
+            if (err || !hash || !hash.idToken) {
+              /* Must have had hash, but didn't get an idToken in the hash */
+              console.error('login error: ', err);;
+              return dispatch({
+                type: constants.LOGIN_FAILED,
+                payload: {
+                  error: err && err.error ? `${err.error}: ${err.errorDescription}` : 'UnknownError: Unknown Error'
+                }
+              });
+            }
 
-          const returnTo = sessionStorage.getItem('criipto-verify-extension:returnTo');
-          sessionStorage.removeItem('criipto-verify-extension:returnTo');
-          return processTokens(dispatch, hash.idToken, returnTo);
-        });
+            const returnTo = popReturnTo();
+            return processTokens(dispatch, hash.idToken, returnTo);
+          });
+        }
+
+        /* There was no hash, so use the token from storage */
+        return processTokens(dispatch, token);
       }
-
-      /* There was no hash, so use the token from storage */
-      return processTokens(dispatch, token);
-    }
+  }
   };
 }

@@ -71,16 +71,16 @@ createTenant = () => {
       );
     } else if (this.props.domainStatus && !this.props.domainStatus.available) {
       return (
-          <section className="form-group">
-            <h4>
-              <p>Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
-              <p>
-                Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
-                We'll need your assistance with selecting a new one of your liking:
-              </p>
-              <CheckDomainForm onCheck={this.checkAvailability}/>
-            </h4>
-          </section>
+        <div className='row col-xs-12'>
+          <h4>
+            <p>Well, isn't that typical! It looks like someone else has already reserved the DNS domain: <code>{this.props.domainStatus.nameCandidate}</code>.</p>
+            <p>
+              Fortunately, that particular value was just a guess we made, based on your Auth0 tenants DNS name.<br/>
+              We'll need your assistance with selecting a new one of your liking:
+            </p>
+          </h4>
+          <CheckDomainForm onCheck={this.checkAvailability}/>
+        </div>
       );
     } else {
       var activeElement = 
