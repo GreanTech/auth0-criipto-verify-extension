@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import {connect} from 'react-redux';
-import {createVerifyTenant, checkDomainAvailable, enrollVerifyDomain} from '../actions/verify';
+import {createVerifyTenant, useDomainIfAvailable} from '../actions/verify';
 import VerifyDomain from './VerifyDomain';
 import CheckDomainForm from './CheckDomainForm';
 import {tryToJS} from '../dsl';
@@ -16,7 +16,7 @@ class VerifyTenant extends Component {
     createVerifyTenant : PropTypes.func.isRequired,
     existingTenant: PropTypes.object.isRequired,
     renewingAuthentication: PropTypes.bool.isRequired,
-    enrollVerifyDomain: PropTypes.func.isRequired,
+    useDomainIfAvailable: PropTypes.func.isRequired,
     domainStatus: PropTypes.object
   };
 
@@ -24,11 +24,11 @@ class VerifyTenant extends Component {
     super(props);
     this.state = { creatingTenant: false };
     this.createTenant = this.createTenant.bind(this);
-    this.checkAvailability = this.checkAvailability.bind(this);
+    this.useDomainIfAvailable = this.useDomainIfAvailable.bind(this);
   }
 
-  checkAvailability = (candidate) => {
-    this.props.checkDomainAvailable(candidate);
+  useDomainIfAvailable = (candidate) => {
+    this.props.useDomainIfAvailable(candidate);
   }
 
   hasExistingTenant(props) {
@@ -37,32 +37,6 @@ class VerifyTenant extends Component {
 
   isDomainAvailable(props) {
     return props.domainStatus && props.domainStatus.available;
-  }
-  
-  componentDidUpdate(prevProps) {
-    // When core verify data are loaded, no tenant was found, and the user intended
-    // to create one, trigger tenant creation
-    var tenantLoadingJustCompleted = prevProps.tenantsLoading && !this.props.tenantsLoading;
-    if (this.props.intent === 'create'  
-      && tenantLoadingJustCompleted
-      && this.isDomainAvailable(this.props)
-      && !this.hasExistingTenant(this.props)) {
-      this.createTenant();
-    }
-
-    var domainBecameAvailable = 
-      !this.isDomainAvailable(prevProps) 
-      && this.isDomainAvailable(this.props);
-    // Detect when an available domain has been found and Gauss tenant did not get registered properly in Verify
-    if (domainBecameAvailable
-        && this.props.tenants 
-        && this.props.tenants.length > 0) {
-        this.props.enrollVerifyDomain(
-            _.first(this.props.tenants).organization,
-            this.props.verifyLinkTemplates,
-            this.props.verifyLinks,                
-            this.props.domainStatus.nameCandidate);
-    }
   }
 
   createTenant = () => {
@@ -100,7 +74,7 @@ class VerifyTenant extends Component {
               We'll need your assistance with selecting a new one of your liking:
             </p>
           </h4>
-          <CheckDomainForm onCheck={this.checkAvailability}/>
+          <CheckDomainForm onCheck={this.useDomainIfAvailable}/>
         </div>
       );
     } else {
@@ -137,5 +111,5 @@ function mapStateToProps(state) {
   };
 };
 
-const mapDispatch = {checkDomainAvailable, enrollVerifyDomain, createVerifyTenant}
+const mapDispatch = {useDomainIfAvailable, createVerifyTenant}
 export default connect(mapStateToProps, mapDispatch)(VerifyTenant);

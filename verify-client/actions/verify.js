@@ -156,6 +156,63 @@ export function checkDomainAvailable(dnsName) {
     }
 };
 
+export function useDomainIfAvailable(dnsName, finalAttempt) {
+    const cancel = () => { cancel: true }; 
+    return (dispatch, getState) => {
+        return dispatch(checkDomainAvailable(dnsName))
+            .then((resolved) => {
+                var state = getState();
+                var domainStatus = state.checkDomainAvailable.get('domainStatus').toJS();
+                if (!domainStatus || !domainStatus.available) {
+                    // No dice, make user try another value
+                    throw cancel();
+                } else {
+                    var existingTenant = state.verifyTenants.get('existingTenant').toJS();
+                    if (!existingTenant || !existingTenant.entityIdentifier) {
+                        var user = state.auth.get('user');
+                        var verifyLinks = state.verifyLinks.get('links').toJS();
+                        var verifyLinkTemplates = state.verifyLinks.get('linkTemplates').toJS();                                            
+                        return dispatch(createVerifyTenant(user, verifyLinks, verifyLinkTemplates));
+                    }
+                    return resolved;
+                }
+            })
+            .then((resolved) => {
+                var state = getState();
+                var existingTenant = state.verifyTenants.get('existingTenant').toJS();
+                if (!existingTenant || !existingTenant.entityIdentifier) {
+                    var gaussTenants = state.verifyTenants.get('tenants').toJS();
+                    if (!gaussTenants || gaussTenants.length === 0) {
+                        throw new Error(`Failed to create Verify tenant (entityIdentifier ${constants.GAUSS_ENTITY_ID})`);
+                    }
+                    else {
+                        var verifyLinks = state.verifyLinks.get('links').toJS();
+                        var verifyLinkTemplates = state.verifyLinks.get('linkTemplates').toJS();                                            
+                        return dispatch(mergeVerifyDomain(_.first(gaussTenants).organization, verifyLinkTemplates, verifyLinks, dnsName));
+                    }
+                }
+            }).then(resolved => {
+                return dispatch(fetchExistingVerifyDomains())
+            }).then((resolved) => {
+                var state = getState();
+                var existingDomain = state.verifyDomains.get('existingDomain').toJS();
+                if (!existingDomain || !existingDomain.name) {
+                    if (finalAttempt) {
+                        throw new Error(`Cannot enroll Verify tenant domain ${dnsName}`);
+                    } else {
+                        return dispatch(useDomainIfAvailable(dnsName, true));
+                    }
+                }
+                return dispatch(mergeVerifyApplications(existingDomain));
+            }).catch(e => {
+                if (_.isEqual(e, cancel())) {
+                    return;
+                }
+                throw e;
+            });
+    }
+}
+
 export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
     var accessRequestLink = _.find(verifyLinks, { 'rel': 'easyid:access-request'});
     var payload = {
@@ -165,7 +222,7 @@ export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
         contactName: user.get('name')
     };
     return (dispatch) => {
-        dispatch({
+        return dispatch({
             type: constants.CREATE_VERIFY_TENANT,
             payload: {
                 promise:
@@ -177,17 +234,36 @@ export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
                                 'Content-Type' : contentType('access-request')
                             }
                     })
+                    .catch(e => {
+                        if (!error || !error.response) {
+                            throw error;
+                        }
+                        if(error.response.status == 400)
+                        {
+                            throw new Error(`Cannot create Verify tenant with entityIdentifier ${constants.GAUSS_ENTITY_ID}`);
+                        }
+                        
+                        throw e;
+                    })
                     .then(() => { return dispatch(localLogout()); })
                     .then(() => { return dispatch(renewAuth('/verify')); })
+                    .then(() => { return dispatch(fetchVerifyTenants()); })
                 }
             }
         )
     }
 };
 
+const looksLikeAVerifyTenant = (candidate) => {
+    return candidate && candidate.id && candidate.id !== '';
+}
+
 function tenantDomainsResource(verifyTenant, verifyLinkTemplates) {
     var verifyDomainsResourceTemplate = 
         _.find(verifyLinkTemplates, {'rel' : 'easyid:tenant-domains'});
+    if (!looksLikeAVerifyTenant(verifyTenant)) {
+        throw new Error("Specified 'verifyTenant' MUST HAVE an non-empty 'id' property");
+    }
     var verifyDomainsResource = 
         withTenantId(verifyDomainsResourceTemplate.href, verifyTenant);
     return verifyDomainsResource;
@@ -204,6 +280,9 @@ function fetchExistingVerifyDomains() {
     return (dispatch, getState) => {
         var state = getState();
         var existingTenant = state.verifyTenants.get('existingTenant').toJS();
+        if (!looksLikeAVerifyTenant(existingTenant)) {
+            return;
+        }
         var verifyLinkTemplates = state.verifyLinks.get('linkTemplates').toJS();
         dispatch(fetchVerifyDomain(existingTenant, verifyLinkTemplates));
     }
@@ -314,7 +393,7 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
                             var candidate = filterDomainsByDnsName(tenantDomains.domains, dnsName);
                             if (!candidate) 
                             {
-                                dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName));
+                                return dispatch(createVerifyDomain(verifyTenant, verifyLinkTemplates, dnsName));
                             }
                             return { existingDomain: candidate };
                         })
@@ -350,7 +429,7 @@ export function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLink
         domainName: dnsName
     };
     return (dispatch) => {
-        dispatch({
+        return dispatch({
             type: constants.ENROLL_VERIFY_DOMAIN,
             payload: {
                 promise: 
@@ -363,9 +442,12 @@ export function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLink
                             }
                         }
                     ).then(getPayload)
+                    // .then(() => {
+                    //     return dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
+                    //})
                     .then(() => {
-                        return dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
-                    }).then(() => dispatch(fetchRegisteredTenants()))
+                        return dispatch(fetchRegisteredTenants());
+                    })
             }
         })
     }

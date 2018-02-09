@@ -51,10 +51,6 @@ export function login(returnUrl) {
     } else {
       sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
 
-      window.addEventListener('message', e => {
-        console.log('got postMessage event', e);
-      });
-
       return new Promise(function(resolve, reject) {
         webAuth.popup.authorize(authorizeOptions, function(err, authResult) {
           if (err) {
@@ -89,7 +85,7 @@ export function localLogout() {
   return (dispatch) => {
     sessionStorage.removeItem('criipto-verify:apiToken');
 
-    dispatch({ type: constants.RENEW_LOGIN });
+    return dispatch({ type: constants.RENEW_LOGIN });
   }
 }
 

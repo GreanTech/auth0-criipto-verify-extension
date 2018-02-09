@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { mergeVerifyDomain } from '../actions/verify';
 import _ from 'lodash';
 import { tryToJS } from '../dsl';
 import VerifyApplication from '../containers/VerifyApplication';
@@ -14,40 +13,11 @@ class VerifyDomain extends Component {
         existingTenant: PropTypes.object.isRequired,
         verifyLinks: PropTypes.array.isRequired,
         verifyLinkTemplates: PropTypes.array.isRequired,
-        mergeVerifyDomain: PropTypes.func.isRequired,
         existingDomain: PropTypes.object,
     }
 
     constructor(props) {
         super(props);
-    }
-
-    componentDidMount() {
-        if (!this.props.existingDomain
-            && this.props.domainStatus 
-            && this.props.domainStatus.available            
-            && _.find(this.props.verifyLinkTemplates, { 'rel': 'easyid:tenant-domains' })) {
-            this.props.mergeVerifyDomain(
-                this.props.existingTenant,
-                this.props.verifyLinkTemplates,
-                this.props.verifyLinks,                
-                this.props.domainStatus.nameCandidate);
-        }
-    }
-
-    componentDidUpdate(prevProps) {
-        // Detect when suggested domain is one that is available
-        if (!this.props.existingDomain
-            && prevProps.domainStatus
-            && !prevProps.domainStatus.available
-            && this.props.domainStatus 
-            && this.props.domainStatus.available) {
-            this.props.mergeVerifyDomain(
-                this.props.existingTenant,
-                this.props.verifyLinkTemplates,
-                this.props.verifyLinks,                
-                this.props.domainStatus.nameCandidate);
-        }        
     }
 
     render() {
@@ -77,5 +47,4 @@ function mapStateToProps(state) {
     };
 };
 
-const mapDispatch = { mergeVerifyDomain }
-export default connect(mapStateToProps, mapDispatch)(VerifyDomain);
+export default connect(mapStateToProps)(VerifyDomain);
