@@ -213,7 +213,7 @@ export function useDomainIfAvailable(dnsName, finalAttempt) {
     }
 }
 
-export function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
+function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
     var accessRequestLink = _.find(verifyLinks, { 'rel': 'easyid:access-request'});
     var payload = {
         entityIdentifier : constants.GAUSS_ENTITY_ID,
@@ -382,7 +382,7 @@ function fetchVerifyDomain(verifyTenant, verifyLinkTemplates) {
     }
 };
 
-export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
+function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
     return (dispatch) => {
         dispatch({
             type: constants.MERGE_VERIFY_DOMAINS,
@@ -420,7 +420,7 @@ export function mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks
     }
 };
 
-export function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
+function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName) {
     var enrollLink = _.find(verifyLinks, { 'rel': 'easyid:enrollment' });
     var cfg = window.config;
     var payload = {

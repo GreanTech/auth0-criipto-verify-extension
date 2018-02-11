@@ -59,6 +59,8 @@ export const GAUSS_ENTITY_ID = window.config.GAUSS_ENTITY_ID;
 export const VERIFY_TENANT_ID_PREFIX = 'urn:grn:easyid:tenant:';
 
 export const VERIFY_TENANT_INTENT = 'VERIFY_TENANT_INTENT';
+export const VERIFY_TENANT_INTENT_CREATE = 'create';
+export const VERIFY_TENANT_INTENT_MANAGE = 'manage';
 
 // Initial batch loading
 export const FETCH_CORE = 'FETCH_CORE';

@@ -27,9 +27,9 @@ class ConnectVerify extends Component {
         this.props.history.push('/verify');        
     }
     
-    onClickCreate() { this.registerIntent('create'); }
+    onClickCreate() { this.registerIntent(constants.VERIFY_TENANT_INTENT_CREATE); }
 
-    onClickManage() { this.registerIntent('manage'); }
+    onClickManage() { this.registerIntent(constants.VERIFY_TENANT_INTENT_MANAGE); }
     
     render() {
         return (

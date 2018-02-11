@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import {connect} from 'react-redux';
-import {createVerifyTenant, useDomainIfAvailable} from '../actions/verify';
+import {useDomainIfAvailable} from '../actions/verify';
 import VerifyDomain from './VerifyDomain';
 import CheckDomainForm from './CheckDomainForm';
 import {tryToJS} from '../dsl';
 import './Styles.css';
 import { Error } from 'auth0-extension-ui';
+import * as constants from '../constants';
 
 class VerifyTenant extends Component {
   static propTypes = {
@@ -13,7 +14,6 @@ class VerifyTenant extends Component {
     intent: PropTypes.string,
     tenantsLoading: PropTypes.bool.isRequired,
     error: PropTypes.string,
-    createVerifyTenant : PropTypes.func.isRequired,
     existingTenant: PropTypes.object.isRequired,
     renewingAuthentication: PropTypes.bool.isRequired,
     useDomainIfAvailable: PropTypes.func.isRequired,
@@ -25,9 +25,26 @@ class VerifyTenant extends Component {
     this.state = { creatingTenant: false };
     this.createTenant = this.createTenant.bind(this);
     this.useDomainIfAvailable = this.useDomainIfAvailable.bind(this);
+    this.state = { creatingTenant: false };
+  }
+
+  componentDidMount()
+  {
+    if (this.props.intent === constants.VERIFY_TENANT_INTENT_CREATE) 
+    {
+      this.useDomainIfAvailable(this.domainStatus.nameCandidate);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState)
+  {
+    if (prevState.creatingTenant && this.hasExistingTenant(this.props)) {
+      this.setState({creatingTenant : false});
+    }
   }
 
   useDomainIfAvailable = (candidate) => {
+    this.setState({ creatingTenant: true });
     this.props.useDomainIfAvailable(candidate);
   }
 
@@ -40,11 +57,7 @@ class VerifyTenant extends Component {
   }
 
   createTenant = () => {
-    this.setState({ creatingTenant: true });
-    this.props.createVerifyTenant(
-      this.props.user, 
-      this.props.verifyLinks,
-      this.props.verifyLinkTemplates);
+    this.useDomainIfAvailable(this.domainStatus.nameCandidate, true);
   }
 
   render() {
@@ -111,5 +124,5 @@ function mapStateToProps(state) {
   };
 };
 
-const mapDispatch = {useDomainIfAvailable, createVerifyTenant}
+const mapDispatch = {useDomainIfAvailable}
 export default connect(mapStateToProps, mapDispatch)(VerifyTenant);

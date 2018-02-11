@@ -2,20 +2,9 @@ import React, {Component, PropTypes} from 'react';
 import { connect } from 'react-redux';
 import Section from './Section';
 import Footer from './Footer';
-import {fetchCore} from '../actions/verify'
+import {RequireCoreVerifyData} from '../containers/RequireAuthentication';
 
 class Home extends Component {
-  static propTypes = {
-    fetchCore: PropTypes.func.isRequired,
-  }
-  
-  constructor(props){
-    super(props);
-  }
-
-  componentDidMount() {
-    this.props.fetchCore();
-  }
 
   render() {
     return (
@@ -27,6 +16,4 @@ class Home extends Component {
   }
 }
 
-const mapDispatch = {fetchCore};
-
-export default connect(null, mapDispatch)(Home);
+export default connect()(Home);

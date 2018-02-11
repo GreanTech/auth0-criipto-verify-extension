@@ -11,7 +11,8 @@ let initialStateTenants = {
   tenants: [],
   existingTenant: {},
   registeredTenants: [],
-  intent: sessionStorage.getItem('criipto-verify:tenant-intent')
+  intent: sessionStorage.getItem('criipto-verify:tenant-intent'),
+  coreFetchCompleted: false
 };
 
 const formatError = (action, msgPrefix) => {
@@ -43,6 +44,7 @@ export const verifyTenants = createReducer(fromJS(initialStateTenants), { // esl
   [constants.FETCH_CORE_VERIFY_FULFILLED]: (state) =>
     state.merge({
       loading: false,
+      coreFetchCompleted: true,
       error: null
     }),
   [constants.FETCH_VERIFY_TENANTS_REJECTED]: (state, action) =>
