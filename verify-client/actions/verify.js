@@ -437,11 +437,9 @@ function enrollVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsN
                             }
                         }
                     ).then(getPayload)
-                    // .then(() => {
-                    //     return dispatch(mergeVerifyDomain(verifyTenant, verifyLinkTemplates, verifyLinks, dnsName));
-                    //})
-                    .then(() => {
-                        return dispatch(fetchRegisteredTenants());
+                    .then(r => {
+                        dispatch(fetchRegisteredTenants());
+                        return r;
                     })
             }
         })
