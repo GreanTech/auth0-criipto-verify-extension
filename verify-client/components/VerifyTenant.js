@@ -30,7 +30,8 @@ class VerifyTenant extends Component {
 
   componentDidMount()
   {
-    if (this.props.intent === constants.VERIFY_TENANT_INTENT_CREATE) 
+    if (this.props.intent === constants.VERIFY_TENANT_INTENT_CREATE
+      && this.domainStatus && this.domainStatus.available) 
     {
       this.useDomainIfAvailable(this.domainStatus.nameCandidate);
     }

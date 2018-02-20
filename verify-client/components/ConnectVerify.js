@@ -41,7 +41,7 @@ class ConnectVerify extends Component {
                             <header className="major">
                                 <h3>
                                     <p>Welcome to the <code>{window.config.CRIIPTO_VERIFY_AUTHMETHOD_NAME + " via " || ""} Criipto Verify</code> connection wizard!</p>
-                                    <p>We will guide you through the process, which starts getting an account set up in <code>Criipto Verify</code></p>
+                                    <p>We will guide you through the process, starting with getting an account set up in <code>Criipto Verify</code></p>
                                 </h3>
                             </header>
                             <p><button className="btn btn-default" onClick={this.onClickCreate}>Create account</button></p>

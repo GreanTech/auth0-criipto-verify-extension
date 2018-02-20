@@ -27,7 +27,7 @@ class VerifyApplicationContainer extends Component {
         } else if (this.props.existingApplication) {
             return (<VerifyApplication {...this.props}/>);
         } else {
-            return (<span>No Criipto Verify application found - creating one...</span>);
+            return (<section><span>No Criipto Verify application found - creating one...</span></section>);
         }
     }
 }

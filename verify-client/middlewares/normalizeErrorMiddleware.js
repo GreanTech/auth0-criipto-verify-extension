@@ -2,7 +2,7 @@ export default function normalizeErrorMiddleware() {
   return () => next => action => {
     if (action && action.type.endsWith('_REJECTED') && action.payload) {
       // Try to get the default error message from the response.
-      let errorMessage = action.payload.statusText || action.payload.status || 'Unknown Server Error';
+      let errorMessage = action.payload.statusText || action.payload.status || action.payload.message || 'Unknown Server Error';
 
       // Maybe some data is available.
       let error = action.payload.data && action.payload.data.message;

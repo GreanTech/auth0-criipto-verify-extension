@@ -234,16 +234,11 @@ function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
                                 'Content-Type' : contentType('access-request')
                             }
                     })
-                    .catch(e => {
-                        if (!error || !error.response) {
+                    .catch(error => {
+                        if (!error || !error.response || error.response.status !== 400) {
                             throw error;
                         }
-                        if(error.response.status == 400)
-                        {
-                            throw new Error(`Cannot create Verify tenant with entityIdentifier ${constants.GAUSS_ENTITY_ID}`);
-                        }
-                        
-                        throw e;
+                        return Promise.reject(error);
                     })
                     .then(() => { return dispatch(localLogout()); })
                     .then(() => { return dispatch(renewAuth('/verify')); })
