@@ -33,6 +33,7 @@ export default (storage) => {
       <% if (assets.vendors) { %><script type="text/javascript" src="/app/<%= assets.vendors %>"></script><% } %>
       <% if (assets.app) { %><script type="text/javascript" src="/app/<%= assets.app %>"></script><% } %>
       <% if (assets.version) { %>
+      <link rel="stylesheet" type="text/css" href="<%= assets.cdnPath %>/auth0-criipto-verify-admin.ui.<%= assets.version %>.css" />
       <script type="text/javascript" src="<%= assets.cdnPath %>/auth0-criipto-verify-admin.ui.vendors.<%= assets.version %>.js"></script>
       <script type="text/javascript" src="<%= assets.cdnPath %>/auth0-criipto-verify-admin.ui.<%= assets.version %>.js"></script>
       <% } %>
