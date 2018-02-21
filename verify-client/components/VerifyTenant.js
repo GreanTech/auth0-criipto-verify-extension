@@ -31,9 +31,9 @@ class VerifyTenant extends Component {
   componentDidMount()
   {
     if (this.props.intent === constants.VERIFY_TENANT_INTENT_CREATE
-      && this.domainStatus && this.domainStatus.available) 
+      && this.props.domainStatus && this.props.domainStatus.available) 
     {
-      this.useDomainIfAvailable(this.domainStatus.nameCandidate);
+      this.useDomainIfAvailable(this.props.domainStatus.nameCandidate);
     }
   }
 
@@ -89,6 +89,12 @@ class VerifyTenant extends Component {
             </p>
           </h4>
           <CheckDomainForm onCheck={this.useDomainIfAvailable}/>
+        </div>
+      );
+    } else if (this.props.intent === constants.VERIFY_TENANT_INTENT_CREATE) {
+      return (
+        <div>Creating Criipto Verify tenant
+          <div className="loader"></div>
         </div>
       );
     } else {

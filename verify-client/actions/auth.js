@@ -8,7 +8,7 @@ import { locale } from 'moment';
 
 const issuer = window.config.CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER || `https://${window.config.CRIIPTO_VERIFY_AUTH0_DOMAIN}/`;
 
-const webAuth = new auth0.WebAuth({ // eslint-disable-line no-undef
+const createWebAuth = () => new auth0.WebAuth({ // eslint-disable-line no-undef
   domain: window.config.CRIIPTO_VERIFY_AUTH0_DOMAIN,
   clientID: window.config.CRIIPTO_VERIFY_CLIENT_ID,
   popupOrigin: window.config.BASE_URL,
@@ -25,18 +25,6 @@ const authorizeOptions = {
   scope: 'openid email name scopedUserClaims'
 };
 
-export function renewAuth(returnUrl) {
-  return (dispatch, getState) => {
-    var state = getState();
-    var domainAvailable = tryToJS(state.checkDomainAvailable.get('domainStatus'));
-    if (domainAvailable && domainAvailable.available) {
-      sessionStorage.setItem('criipto-verify-extension:dnsNameCandidate', domainAvailable.nameCandidate);
-    }
-    sessionStorage.removeItem('criipto-verify:apiToken');
-    return dispatch(login(returnUrl));
-  };
-}
-
 export function login(returnUrl) {
   return (dispatch) => {
     var existingToken = sessionStorage.getItem('criipto-verify:apiToken');
@@ -52,6 +40,7 @@ export function login(returnUrl) {
       sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
 
       return new Promise(function(resolve, reject) {
+        var webAuth = createWebAuth();
         webAuth.popup.authorize(authorizeOptions, function(err, authResult) {
           if (err) {
             dispatch({ type: constants.LOGIN_FAILED, payload: err });
@@ -79,14 +68,6 @@ function isExpired(decodedToken) {
   d.setUTCSeconds(decodedToken.exp);
 
   return !(d.valueOf() > (new Date().valueOf() + (1000)));
-}
-
-export function localLogout() {
-  return (dispatch) => {
-    sessionStorage.removeItem('criipto-verify:apiToken');
-
-    return dispatch({ type: constants.RENEW_LOGIN });
-  }
 }
 
 export function logout() {
@@ -157,6 +138,7 @@ export function loadCredentials() {
           type: constants.LOGIN_PENDING
         });
 
+        var webAuth = createWebAuth();
         if (window.opener) {
           // popup mode (most likely, at least), tell the popup to notify
           // opener window and close itself

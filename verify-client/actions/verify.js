@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as constants from '../constants';
 import _ from 'lodash'; 
-import { localLogout, login, renewAuth } from './auth';
+import { login } from './auth';
 import { toJS } from 'immutable';
 import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyRealm, verifyApplication, defaultVerifyDnsName, tryToJS} from '../dsl'
 import { findConnections } from './connection'
@@ -240,8 +240,6 @@ function createVerifyTenant(user, verifyLinks, verifyLinkTemplates) {
                         }
                         return Promise.reject(error);
                     })
-                    .then(() => { return dispatch(localLogout()); })
-                    .then(() => { return dispatch(renewAuth('/verify')); })
                     .then(() => { return dispatch(fetchVerifyTenants()); })
                 }
             }
