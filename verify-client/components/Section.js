@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import VerifyTenant from './VerifyTenant';
 import { toJS } from 'immutable';
-import Connections from './Connections';
 
 class Section extends Component {
   static propTypes = {
@@ -20,7 +19,6 @@ class Section extends Component {
           <h3>Hi there, {this.props.user.get("name")} (email: {this.props.user.get("email")})</h3>
         </header>
         <VerifyTenant/>
-        <Connections/>
       </section>
     );
   }

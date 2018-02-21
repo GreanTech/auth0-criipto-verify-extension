@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {useDomainIfAvailable} from '../actions/verify';
 import VerifyDomain from './VerifyDomain';
 import CheckDomainForm from './CheckDomainForm';
+import Connections from './Connections';
 import {tryToJS} from '../dsl';
 import './Styles.css';
 import { Error } from 'auth0-extension-ui';
@@ -76,6 +77,7 @@ class VerifyTenant extends Component {
           <h5>Criipto Verify tenant details</h5>
           Tenant name: {this.props.existingTenant.name}
           <VerifyDomain/>
+          <Connections/>
         </div>     
       );
     } else if (!this.isDomainAvailable(this.props)) {
