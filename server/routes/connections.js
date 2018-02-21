@@ -35,8 +35,26 @@ export default (storage) => {
 
   api.post('/', (req, res, next) => {
     var payload = _.assign({}, req.body, {strategy: 'adfs'});
-    req.auth0.connections.create(payload)
-      .then(() => res.status(204).send())
+    req.auth0.connections.getAll()
+      .then(connections => {
+        var nameClashCandidate = 
+          connections.find(c => c.name === payload.name && c.strategy === 'adfs');
+        var requestedAdfsServer = payload.options.adfs_server;
+        console.info(nameClashCandidate);
+        if (nameClashCandidate
+          && nameClashCandidate.options.adfs_server !== requestedAdfsServer) {
+            var msg = 
+              `An ADFS connection with name ${payload.name} already exists`
+              + `, but points to another server (${nameClashCandidate.options.adfs_server})`
+              + ` than the specified one (${requestedAdfsServer})`
+              + `. If the current value is incorrect, you can change it from Auth0's management UI (Connections -> Enterprise -> ADFS -> 'Settings' cog for ${payload.name})`;
+            throw Error(msg);
+        }
+      })
+      .then(() => {
+        return req.auth0.connections.create(payload)
+          .then(() => res.status(204).send())
+      })
       .catch(next);
   });
 
