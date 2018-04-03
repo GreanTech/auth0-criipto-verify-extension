@@ -19,10 +19,11 @@ const createWebAuth = () => new auth0.WebAuth({ // eslint-disable-line no-undef
 });
 
 const authorizeOptions = {
-  responseType: 'id_token',
+  responseType: 'id_token token',
   responseMode: 'form_post',
   redirectUri: `${window.config.BASE_URL}/login`,
-  scope: 'openid email name scopedUserClaims'
+  scope: 'openid email',
+  audience: window.config.CRIIPTO_VERIFY_AUDIENCE
 };
 
 export function login(returnUrl) {
@@ -32,10 +33,12 @@ export function login(returnUrl) {
       const decodedToken = jwtDecode(existingToken);
       if (isExpired(decodedToken)) {
         sessionStorage.removeItem('criipto-verify:apiToken');
+        sessionStorage.removeItem('criipto-verify:idToken');
         dispatch({ type: constants.LOGIN_PENDING });
         return;
       }          
-      return processTokens(dispatch, existingToken, returnUrl);
+      var idToken = sessionStorage.getItem('criipto-verify:apiToken');
+      return processTokens(dispatch, existingToken, idToken, returnUrl);
     } else {
       sessionStorage.setItem('criipto-verify-extension:returnTo', returnUrl);
 
@@ -47,7 +50,7 @@ export function login(returnUrl) {
             reject(err);
           } else if (authResult) {
             const returnTo = popReturnTo();
-            return resolve(processTokens(dispatch, authResult.idToken, returnTo));
+            return resolve(processTokens(dispatch, authResult.accessToken, authResult.idToken, returnTo));
           } else {
             err = "Neither error or authResult returned by popup.";
             dispatch({ type: constants.LOGIN_FAILED, payload: err });
@@ -86,7 +89,7 @@ export function logout() {
   };
 }
 
-const processTokens = (dispatch, apiToken, returnTo) => {
+const processTokens = (dispatch, apiToken, idToken, returnTo) => {
   const decodedToken = jwtDecode(apiToken);
   if (isExpired(decodedToken)) {
     return;
@@ -95,6 +98,7 @@ const processTokens = (dispatch, apiToken, returnTo) => {
   axios.defaults.headers.common.Authorization = `Bearer ${apiToken}`;
 
   sessionStorage.setItem('criipto-verify:apiToken', apiToken);
+  sessionStorage.setItem('criipto-verify:idToken', idToken);
 
   dispatch({
     type: constants.LOADED_TOKEN,
@@ -131,8 +135,8 @@ export function loadCredentials() {
       return;
     }
 
-    const token = sessionStorage.getItem('criipto-verify:apiToken');
-    if (token || window.location.hash) {
+    const accessToken = sessionStorage.getItem('criipto-verify:apiToken');
+    if (accessToken || window.location.hash) {
       if (window.location.hash) {
         dispatch({
           type: constants.LOGIN_PENDING
@@ -143,11 +147,12 @@ export function loadCredentials() {
           // popup mode (most likely, at least), tell the popup to notify
           // opener window and close itself
           webAuth.popup.callback();
+          return;
         } else {
           return webAuth.parseHash({
             hash: window.location.hash
           }, (err, hash) => {
-            if (err || !hash || !hash.idToken) {
+            if (err || !hash || !hash.accessToken) {
               /* Must have had hash, but didn't get an idToken in the hash */
               console.error('login error: ', err);;
               return dispatch({
@@ -159,12 +164,13 @@ export function loadCredentials() {
             }
 
             const returnTo = popReturnTo();
-            return processTokens(dispatch, hash.idToken, returnTo);
+            return processTokens(dispatch, hash.accessToken, hash.idToken, returnTo);
           });
         }
 
         /* There was no hash, so use the token from storage */
-        return processTokens(dispatch, token);
+        var idToken = sessionStorage.getItem('criipto-verify:idToken');
+        return processTokens(dispatch, accessToken, idToken);
       }
   }
   };

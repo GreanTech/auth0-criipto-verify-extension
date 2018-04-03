@@ -27,7 +27,7 @@ export default (storage) => {
     </head>
     <body>
       <div id="app"></div>
-      <script src="https://cdn.auth0.com/js/auth0/8.10.1/auth0.min.js"></script>
+      <script src="https://cdn.auth0.com/js/auth0/9.4.2/auth0.min.js"></script>
       <script type="text/javascript" src="//cdn.auth0.com/manage/v0.3.1672/js/bundle.js"></script>
       <script type="text/javascript">window.config = <%- JSON.stringify(config) %>;</script>
       <% if (assets.vendors) { %><script type="text/javascript" src="/app/<%= assets.vendors %>"></script><% } %>
@@ -54,6 +54,7 @@ export default (storage) => {
       const settings = {
         CRIIPTO_VERIFY_AUTH0_DOMAIN: config('CRIIPTO_VERIFY_AUTH0_DOMAIN'),
         CRIIPTO_VERIFY_CLIENT_ID: config('CRIIPTO_VERIFY_CLIENT_ID'),
+        CRIIPTO_VERIFY_AUDIENCE: config('CRIIPTO_VERIFY_AUDIENCE'),
         CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER: config('CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER'),
         EXTEND_URL: config('EXTEND_URL'),
         BASE_URL: config('GALLERY_WT_URL') || urlHelpers.getBaseUrl(req),

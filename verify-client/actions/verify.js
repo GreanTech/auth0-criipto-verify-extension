@@ -7,12 +7,21 @@ import {contentType, jsonResp, getPayload, verifyTenantId, withTenantId, verifyR
 import { findConnections } from './connection'
 import { fetchClients } from './client'
 
+function gaussRequestConfig() {
+    return { 
+        headers : {
+            "Authorization" : 'Bearer ' + sessionStorage.getItem('criipto-verify:idToken')
+        },
+        responseType: 'json'
+    }
+}
+
 const getScopedClaims = (scopedClaimsLink) => {
     // User may already have onboarded before
     var scopedClaimsRef = scopedClaimsLink.href.replace(
         '{application}', 
         window.btoa(window.config.VERIFY_GAUSS_APP_ID));
-    return axios.get(scopedClaimsRef)
+    return axios.get(scopedClaimsRef, gaussRequestConfig())
         .then(getPayload)
         .then((scopedClaims) => { 
             return scopedClaims.claimScopes; 
@@ -24,7 +33,7 @@ function fetchVerifyTenants() {
         type: constants.FETCH_VERIFY_TENANTS,
         payload: {
             promise:
-                axios.get(window.config.GAUSS_API_ROOT, jsonResp)
+                axios.get(window.config.GAUSS_API_ROOT, gaussRequestConfig())
                     .then(getPayload)
                     .then((gaussRoot) => {
                         var scopedClaimsLink = _.find(
