@@ -11,7 +11,6 @@ const issuer = window.config.CRIIPTO_VERIFY_AUTH0_TOKEN_ISSUER || `https://${win
 const createWebAuth = () => new auth0.WebAuth({ // eslint-disable-line no-undef
   domain: window.config.CRIIPTO_VERIFY_AUTH0_DOMAIN,
   clientID: window.config.CRIIPTO_VERIFY_CLIENT_ID,
-  popupOrigin: window.config.BASE_URL,
   overrides: {
     __tenant: issuer.substr(8).split('.')[0],
     __token_issuer: issuer
